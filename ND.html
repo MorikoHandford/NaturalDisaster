@@ -1,0 +1,3816 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="ECG Studios">
+<meta name="Name" content="ECG Studios' Natural Disaster">
+<meta name="Description" content="A turn based strategy game.">
+<meta name="Copyright" content="2001, Forest J. Handford, East Coast Games, Inc.">
+<title>ECG Studios' Natural Disaster</title>
+<script language="JavaScript"><!--
+// Forest J. Handford
+
+// Global Definitions (to exist until the game ends).
+var PlayerNumber,	// Hold the number of players
+	Rows,			// Hold the Rows
+	Columns,		// Hold the Columns
+	Tradee,			// Hold the person to trade or sell to
+	Points,			// Hold the points to sell for
+	Wood,			// Hold the wood to sell for
+	Steel,			// Hold the Steel to sell for
+	Concrete,		// Hold the concrete to sell for
+	Glass,			// Hold the Glass to sell for
+	Gold,			// Hold the Gold to sell for
+	Contracts,		// Hold the number of contracts in Contract[]
+	Disaster,		// Hold the disaster number for a turn or 99 if there is no disaster
+	Empties = 0,	// The number of empty tiles in the game
+	Turn = 0,		// This will hold the number of the current players turn
+	Output,			// This will store HTML output
+	Forms = 1;		// This will store 1 if the browser supports forms else 0
+
+Player = new Object;	// The player object will hold all players.
+						// Player[].Name = Player's name
+						// Player[].Type = Player Type "C" for Computer or "H" for Human
+						// Player[].Gold = # of Gold Units
+						// Player[].Wood = # of Wood Units
+						// Player[].Steel = # of Steel Units
+						// Player[].Concrete = # of Concrete Units
+						// Player[].Glass = # of Glass Units
+						// Player[].Score = Player's Score
+						// Player[].TechRes = Residence techtree flag
+						// Player[].TechInd = Industrial techtree flag
+						// Player[].TechCom = Commercial techtree flag
+						// Player[].TechGov = Government techtree flag
+						//   AI/Computer Player Data
+						// Player[].Goal = The computer's high level current goal
+						// Player[].GoalStructure = The structure for the goal
+						// Player[].GoalNumber = The number of structures to fulfill the goal
+						// Player[].GoalContract = If it's a contract the contract's number
+						// Player[].NumRes = The # of residences
+						// Player[].NumInd = The # of Industrial
+						// Player[].NumCom = The # of Commercial
+						// Player[].NumGov = The # of governmental
+						// Player[].NumRec = The # of recreational
+						// Player[].NumEdu = The # of educational
+
+Res = new Object;	// Create an object to hold AI residences
+					// Res[Turn.#].Row = The row of the residence
+					// Res[Turn.#].Col = The column of the residence
+
+Ind = new Object;	// Create an object to hold AI industrials
+					// Ind[Turn.#].Row = The row of the industrial
+					// Ind[Turn.#].Col = The column of the industrial
+
+Com = new Object;	// Create an object to hold AI commercials
+					// Com[Turn.#].Row = The row of the commercial
+					// Com[Turn.#].Col = The column of the Commercial
+
+Gov = new Object;	// Create an object to hold AI governments
+					// Gov[Turn.#].Row = The row of the Government
+					// Gov[Turn.#].Col = The column of the Government
+
+Rec = new Object;	// Create an object to hold AI recreationals
+					// Rec[Turn.#].Row = The row of the recreational
+					// Rec[Turn.#].Col = The column of the recreational
+
+Edu = new Object;	// Create an object to hold AI educationals
+					// Edu[Turn.#].Row = The row of the Educational
+					// Edu[Turn.#].Col = The column of the Educational
+
+Grid = new Object;		// The Grid/Tiles will hold the player and grid data.
+						// [Subs] Subs = Row + "X" + Col
+						// Grid[].Owner = Player Number, "None" or "NP" for Non-player
+						// Grid[].Structure = Structure Name eg: River
+						// Grid[].alt = Structure Name eg: River
+						// Grid[].ImageDisplay = The gif file for this tile or action gif
+						// Grid[].Image = The gif file for this tile
+						// Grid[].End = Flag for AI to avoid
+
+Contract = new Object;	// This is an array of the the contracts, The first three are
+						// 	the currently available contracts.
+						// Contract[Number].Name = The contract's name
+						// Contract[Number].Description = The description
+						// Contract[Number].Req = The requirement description
+						// Contract[Number].Points = The contract's point value
+						// Contract[Number].Structure = The structure required
+						// Contract[Number].Number = The number of structures needed
+						// Contract[Number].AdjE = Flag of wether structures should
+						// 	be adjacent to each other.
+						// Contract[Number].AdjRiver = Flag of wether it should be
+						// 	adjacent to a river
+						// Contract[Number].AdjRes =
+						// 	0 = It doesn't have to be near a residence
+						// 	1 = It must be adjacent to a residence
+						// 	2 = It must not be adjacent to a residence
+
+ActionO = new Object;	// The Action queues will store a list of action tiles
+ActionC = new Object;	// ActionO is for tiles owned by other players
+ActionN = new Object;	// ActionC is for tiles owned by the current player
+						// ActionN is for empty tiles
+						// .Row = The row of the tile
+						// .Col = The column of the tile
+
+var ActionOs = 0,		// The queue sizes of each Action queue
+	ActionCs = 0,
+	ActionNs = 0;
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Name the computer players						Rename(PlayerNum)
+function Rename(PlayerNum)
+{
+	if(PlayerNum == 1)
+	{
+		if(Main.document.NameForm.Player1Type.value == "C") Main.document.NameForm.Player1Name.value = "H.A.L.";
+	}
+	else if(PlayerNum == 2)
+	{
+		if(Main.document.NameForm.Player2Type.value == "C") Main.document.NameForm.Player2Name.value = "R2-D2";
+	}
+	else if(PlayerNum == 3)
+	{
+		if(Main.document.NameForm.Player3Type.value == "C") Main.document.NameForm.Player3Name.value = "David";
+	}
+	else if(PlayerNum == 4)
+	{
+		if(Main.document.NameForm.Player4Type.value == "C") Main.document.NameForm.Player4Name.value = "Data";
+	}
+	else if(PlayerNum == 5)
+	{
+		if(Main.document.NameForm.Player5Type.value == "C") Main.document.NameForm.Player5Name.value = "K.I.T.";
+	}
+	else if(PlayerNum == 6)
+	{
+		if(Main.document.NameForm.Player6Type.value == "C") Main.document.NameForm.Player6Name.value = "Johnny 5";
+	}
+}
+
+//////********************************************************************************
+//////   	SETUP CODE - - -  				- - - 			- - - SETUP CODE
+//////********************************************************************************
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Setup the initial game and  player states		Launch()
+function Launch()
+{
+	Contracts = 0;
+	BuildContract();	// Build the contracts
+
+	// Loop through the players to get make the correct amount of name entries
+	for(var PlayerNum=1; PlayerNum<PlayerNumber + 1; PlayerNum++)
+	{
+		Player[PlayerNum] = new Object;
+		Player[PlayerNum].Gold = 0;
+		Player[PlayerNum].Wood = 1;
+		Player[PlayerNum].Steel = 0;
+		Player[PlayerNum].Concrete = 0;
+		Player[PlayerNum].Glass = 0;
+		Player[PlayerNum].Score = 0;
+		Player[PlayerNum].TechRes = 0;
+		Player[PlayerNum].TechInd = 0;
+		Player[PlayerNum].TechCom = 0;
+		Player[PlayerNum].TechGov = 0;
+
+		// We already got the value if there are no forms
+		if(Forms == 1)
+		{
+			if(PlayerNum == 1)
+			{
+				Player[1].Name = Main.document.NameForm.Player1Name.value;
+				Player[1].Type = Main.document.NameForm.Player1Type.value;
+			}
+			else if(PlayerNum == 2)
+			{
+				Player[2].Name = Main.document.NameForm.Player2Name.value;
+				Player[2].Type = Main.document.NameForm.Player2Type.value;
+			}
+			else if(PlayerNum == 3)
+			{
+				Player[3].Name = Main.document.NameForm.Player3Name.value;
+				Player[3].Type = Main.document.NameForm.Player3Type.value;
+			}
+			else if(PlayerNum == 4)
+			{
+				Player[4].Name = Main.document.NameForm.Player4Name.value;
+				Player[4].Type = Main.document.NameForm.Player4Type.value;
+			}
+			else if(PlayerNum == 5)
+			{
+				Player[5].Name = Main.document.NameForm.Player5Name.value;
+				Player[5].Type = Main.document.NameForm.Player5Type.value;
+			}
+			else if(PlayerNum == 6)
+			{
+				Player[6].Name = Main.document.NameForm.Player6Name.value;
+				Player[6].Type = Main.document.NameForm.Player6Type.value;
+			}
+		}
+		else
+		{
+			Player[PlayerNum].Name = prompt("What is the name of player " + PlayerNum + "?","Player " + PlayerNum);
+		}
+
+		if(Player[PlayerNum].Type == "C")
+		{
+			Player[PlayerNum].NumRes = 0;
+			Player[PlayerNum].NumInd = 0;
+			Player[PlayerNum].NumCom = 0;
+			Player[PlayerNum].NumGov = 0;
+			Player[PlayerNum].NumRec = 0;
+			Player[PlayerNum].NumEdu = 0;
+		}
+	}
+
+	// Loop through and create the map
+	for(var Count=0; Count<Rows; Count++)
+	{
+		for(Col=0; Col<Columns; Col++)
+		{
+			var die = Math.floor(Math.random() * 4) + 1;
+			var Subs = Count + "X" + Col;
+			Grid[Subs] = new Object;
+			Grid[Subs].Owner = "None";
+			Grid[Subs].Structure = "Empty";
+			Grid[Subs].alt = "Empty";
+			Grid[Subs].Image = "Empty" + die + ".gif";
+			Grid[Subs].End = 0;
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	// Create the 0 - 4 river(s) - 							RIVER CODE
+	//////////////////////////////////////////////////////////////////////////////
+	var Rivers,		// The number of rivers
+		Dir,		// The direction
+		Image,		// The image to draw
+		OldDir,		// The last direction
+		Junctions;	// The number of junctions to a tile.
+
+	if(Rows*Columns<26) Rivers = Math.floor(Math.random() * 2);
+	else Rivers = Math.floor(Math.random() * 4) + 1;
+
+	while(Rivers--)
+	{
+		var Continue = 1;
+
+		do
+		{
+			Dir = Math.floor(Math.random() * 4);
+
+			//  Find a side to start on
+			if(Dir == 0)
+			{
+				Col = 0;
+				Row = Math.floor(Math.random() * (Rows - 2)) + 1;
+			}
+			else if(Dir == 1)
+			{
+				Row = 0;
+				Col = Math.floor(Math.random() * (Columns - 2)) + 1;
+			}
+			else if(Dir == 2)
+			{
+				Col = (Columns - 1)
+				Row = Math.floor(Math.random() * (Rows - 2)) + 1;
+			}
+			else
+			{
+				Row = (Rows - 1)
+				Col = Math.floor(Math.random() * (Columns - 2)) + 1;
+			}
+		}
+		while(Grid[Row + "X" + Col].Structure == "River");
+
+		Subs = Row + "X" + Col;
+		Grid[Subs].Structure = "River";
+		Grid[Subs].alt = "River";
+		Junctions = UpdateTile("River",Row,Col);
+		if(Junctions > 1) Continue = 0;
+
+		if(Continue)
+		{
+			if(Dir == 0) Col += 1;
+			else if(Dir == 1) Row += 1;
+			else if(Dir == 2) Col -= 1;
+			else Row -= 1;
+
+			var	Die,
+				DirChanges = 0,
+				DirChanged = 0;
+			Subs = Row + "X" + Col;
+
+			if(Grid[Subs].Structure == "River")
+			{
+				Continue = 0;
+
+				UpdateTile("River",Row,Col);
+			}
+			else
+			{
+				Grid[Subs].Structure = "River";
+				Grid[Subs].alt = "River";
+				Junctions = UpdateTile("River",Row,Col);
+				if(Junctions > 1) Continue = 0;
+			}
+		}
+
+		// Continue across the map until we meet another river or the end
+		while(Continue)
+		{
+			OldDir = Dir;
+
+			// Allow up to two direction changes.  Have a 1:4 chance to change direction
+			if(DirChanges < 2&DirChanged < 1)
+			{
+				Die = Math.floor(Math.random() * 4);
+
+				if(Die == 0)
+				{
+					DirChanges += 1;
+					DirChanged = 2;
+					Dir = Math.floor(Math.random() * 2);
+
+					if(Dir == 1) Dir = OldDir + 1;
+					else Dir = OldDir - 1;
+
+					if(Dir>3) Dir = 0;
+					else if(Dir<0) Dir = 3;
+
+					///////////////////////////////////////////////////////////////
+					// Dir: 0 = East 1 = South 2 = West 3 = North ++++++++++++++
+					///////////////////////////////////////////////////////////////
+
+					Junctions = UpdateTile("River",Row,Col);
+					if(Junctions > 1)
+					{
+						Continue = 0;
+						break;
+					}
+
+					// Update neighboring tiles
+					if(Col == 0|Row == 0|Row == Rows - 1|Col == Columns - 1) Continue = 0;
+				}
+			}
+
+			DirChanged--;
+
+			// Continue on in the current direction unless the map ends or we find a river.
+			///////////////////////////////////////////////////////////////
+			// Dir: 0 = East 1 = South 2 = West 3 = North ++++++++++++++
+			///////////////////////////////////////////////////////////////
+			if(Dir == 0) Col += 1;
+			else if(Dir == 1) Row += 1;
+			else if(Dir == 2) Col -= 1;
+			else Row -= 1;
+
+			if(Col == 0|Row == 0|Row == Rows - 1|Col == Columns - 1) Continue = 0;
+
+			Subs = Row + "X" + Col;
+
+			if(Grid[Subs].Structure == "River")
+			{
+				Continue = 0;
+
+				Junctions = UpdateTile("River",Row,Col);
+				if(Junctions > 1) Continue = 0;
+			}
+			else
+			{
+				Grid[Subs].Structure = "River";
+				Grid[Subs].alt = "River";
+				Junctions = UpdateTile("River",Row,Col);
+				if(Junctions > 1) Continue = 0;
+			}
+
+			// Update neighboring tiles
+			if(Col == 0|Row == 0|Row == Rows - 1|Col == Columns - 1) Continue = 0;
+		}
+	}
+
+	for(Row=0; Row<Rows; Row++)
+	{
+		for(Col=0; Col<Columns; Col++)
+		{
+			Subs = Row + "X" + Col;
+
+			if(Grid[Subs].Structure == "River") UpdateTile(Grid[Subs].Structure,Row,Col);
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Create the 1 road									ROAD CODE
+	////////////////////////////////////////////////////////////////////////////////
+	var Dir = Math.floor(Math.random() * 4);
+
+	do
+	{
+		do
+		{
+			if(Dir == 0)
+			{
+				Col = 0;
+				Row = Math.floor(Math.random() * (Rows - 2)) + 1;
+				var Image = "RoadH.gif";
+			}
+			else if(Dir == 1)
+			{
+				Row = 0;
+				Col = Math.floor(Math.random() * (Columns - 2)) + 1;
+				var Image = "RoadV.gif";
+			}
+			else if(Dir == 2)
+			{
+				Col = (Columns - 1)
+				Row = Math.floor(Math.random() * (Rows - 2)) + 1;
+				var Image = "RoadH.gif";
+			}
+			else
+			{
+				Row = (Rows - 1)
+				Col = Math.floor(Math.random() * (Columns - 2)) + 1;
+				var Image = "RoadV.gif";
+			}
+		}
+		while(Grid[Row + "X" + Col].Structure == "River");
+
+		Subs = Row + "X" + Col;
+		Grid[Subs].Structure = "Road";
+		Grid[Subs].alt = "Road";
+		Grid[Subs].Image = Image;
+
+		if(Dir == 0) Col += 1;
+		else if(Dir == 1) Row += 1;
+		else if(Dir == 2) Col -= 1;
+		else Row -= 1;
+
+		Continue = 1;
+		DirChanges = 0,
+		Subs = Row + "X" + Col;
+
+		// If the structure is an H or V river build a bridge, else try the other direction
+		if(Grid[Subs].Structure == "River")
+		{
+			if(Grid[Subs].Image == "RiverH.gif")
+			{
+				Grid[Subs].Image = "BridgeV.gif";
+				Grid[Subs].Structure = "Bridge";
+				Grid[Subs].alt = "Bridge";
+			}
+			else if(Grid[Subs].Image == "RiverV.gif")
+			{
+				Grid[Subs].Image = "BridgeH.gif";
+				Grid[Subs].Structure = "Bridge";
+				Grid[Subs].alt = "Bridge";
+			}
+			else
+			{
+				if(Dir == 0) Col -= 1;
+				else if(Dir == 1) Row -= 1;
+				else if(Dir == 2) Col += 1;
+				else Row += 1;
+
+				DirChanges += 1;
+				OldDir = Dir;
+				DirChanged = OldDir;
+				Dir = Math.floor(Math.random() * 2);
+
+				//////////////////////////////////////////////////////////////////////
+				// Dir: 0 = East 1 = South 2 = West 3 = North ++++++++++++++
+				//////////////////////////////////////////////////////////////////////
+				Subs = Row + "X" + Col;
+
+				if(Grid[Subs].Structure = "River") Continue = 0;
+				else
+				{
+					if(OldDir == 0)
+					{
+						if(Dir == 1) Grid[Subs].Image = "RoadSW.gif";
+						else Grid[Subs].Image = "RoadNW.gif";
+
+						Image = "RoadV.gif";
+					}
+					else if(OldDir == 1)
+					{
+						if(Dir == 0) Grid[Subs].Image = "RoadNE.gif";
+						else Grid[Subs].Image = "RoadNW.gif";
+
+						Image = "RoadH.gif";
+					}
+					else if(OldDir == 2)
+					{
+						if(Dir == 1) Grid[Subs].Image = "RoadSE.gif";
+						else Grid[Subs].Image = "RoadNE.gif";
+
+						Image = "RoadV.gif";
+					}
+					else
+					{
+						if(Dir == 2) Grid[Subs].Image = "RoadSW.gif";
+						else Grid[Subs].Image = "RoadSE.gif";
+
+						Image = "RoadH.gif";
+					}
+
+					Grid[Subs].Structure = "Road";
+					Grid[Subs].alt = "Road";
+				}
+			}
+		}
+		else
+		{
+			Grid[Subs].Structure = "Road";
+			Grid[Subs].alt = "Road";
+			Grid[Subs].Image = Image;
+		}
+	}
+	while(Continue == 0)
+
+	while(Continue)
+	{
+		OldDir = Dir;
+
+		// 1:5 with a max of two dir changes
+		if(DirChanges < 1)
+		{
+			Die = Math.floor(Math.random() * 5);
+
+			if(Die == 0&Grid[Subs].Structure != "River")
+			{
+				DirChanges += 1;
+				DirChanged = OldDir;
+				Dir = Math.floor(Math.random() * 2);
+
+				//////////////////////////////////////////////////////////////////////
+				// Dir: 0 = East 1 = South 2 = West 3 = North  ++++++++++++++
+				//////////////////////////////////////////////////////////////////////
+
+				// Don't change directions if over water!
+				if(Grid[Subs].Structure == "Bridge")
+				{
+					Dir = OldDir;
+					DirChanges += 1;
+					if(DirChanges > 3) Continue = 0;
+				}
+				else if(OldDir == 0)
+				{
+					if(Dir == 1)
+					{
+						Grid[Subs].Image = "RoadSW.gif";
+						Dir = 1;
+					}
+					else
+					{
+						Grid[Subs].Image = "RoadNW.gif";
+						Dir = 3;
+					}
+				}
+				else if(OldDir == 1)
+				{
+					if(Dir == 0)
+					{
+						Grid[Subs].Image = "RoadNE.gif";
+						Dir = 0;
+					}
+					else
+					{
+						Grid[Subs].Image = "RoadNW.gif";
+						Dir = 2;
+					}
+				}
+				else if(OldDir == 2)
+				{
+					if(Dir == 1)
+					{
+						Grid[Subs].Image = "RoadSE.gif";
+						Dir = 1;
+					}
+					else
+					{
+						Grid[Subs].Image = "RoadNE.gif";
+						Dir = 3;
+					}
+				}
+				else
+				{
+					if(Dir == 2)
+					{
+						Grid[Subs].Image = "RoadSW.gif";
+						Dir = 2;
+					}
+					else
+					{
+						Grid[Subs].Image = "RoadSE.gif";
+						Dir = 0;
+					}
+				}
+			}
+		}
+
+		if(Dir == 0) Col += 1;
+		else if(Dir == 1) Row += 1;
+		else if(Dir == 2) Col -= 1;
+		else Row -= 1;
+
+		if(Col == 0|Row == 0|Row == Rows - 1|Col == Columns - 1) Continue = 0;
+
+		Subs = Row + "X" + Col;
+
+		// If it's a river build a bridge or stop
+		if(Grid[Subs].Structure == "River")
+		{
+			if(Grid[Subs].Image == "RiverH.gif")
+			{
+				Grid[Subs].Structure = "Bridge";
+				Grid[Subs].alt = "Bridge";
+				Grid[Subs].Image = "BridgeV.gif";
+			}
+			else if(Grid[Subs].Image == "RiverV.gif")
+			{
+				Grid[Subs].Structure = "Bridge";
+				Grid[Subs].alt = "Bridge";
+				Grid[Subs].Image = "BridgeH.gif";
+			}
+			else Continue = 0;
+		}
+		else
+		{
+			if(Dir == 0|Dir == 2) Image = "RoadH.gif";
+			else Image = "RoadV.gif";
+
+			Grid[Subs].Structure = "Road";
+			Grid[Subs].alt = "Road";
+			Grid[Subs].Image = Image;
+		}
+	}
+
+	for(Row=0; Row<Rows; Row++)
+	{
+		for(Col=0; Col<Columns; Col++)
+		{
+			Subs = Row + "X" + Col;
+
+			if(Grid[Subs].Structure == "Empty") Empties++;
+			if(Grid[Subs].Structure == "Road"|Grid[Subs].Structure == "River") UpdateTile(Grid[Subs].Structure,Row,Col);
+		}
+	}
+
+	ChangeTurn();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+// Display debug info								Debug(Display)
+function Debug(Display)
+{
+	Display = prompt(Display,"X");
+
+	while(Display != "X")
+	{
+		Display = eval(Display);
+		Display = prompt(Display);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+// Change the turn									ChangeTurn()
+function ChangeTurn()
+{
+	if(Turn<PlayerNumber) Turn++;
+	else Turn = 1;
+
+	for(; ActionNs; ActionNs--) delete ActionN[ActionNs];
+	for(; ActionOs; ActionOs--) delete ActionO[ActionOs];
+	for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+
+	var die = Math.floor(Math.random() * 6) + 1;
+
+	if(die == 1) Player[Turn].Gold += 2;
+	else if(die == 2) Player[Turn].Wood += 2;
+	else if(die == 3) Player[Turn].Steel += 2;
+	else if(die == 4) Player[Turn].Concrete += 2;
+	else if(die == 5) Player[Turn].Glass += 2;
+	else
+	{
+		NaturalDisaster();
+		return(0);
+	}
+
+	// Set disaster to 99 so that it isn't confused with a real disaster
+	Disaster = 99;
+	Draw();
+
+	if(Player[Turn].Type == "C") AI();
+}
+
+//////******************************************************************************
+//////   	AI CODE   - - -  				- - - 			- - - AI CODE
+//////******************************************************************************
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Execute AI logic										AI()
+function AI()
+{
+	// Check to see if we can fulfill a contract
+	CheckContracts();
+
+	// Don't build in a blizzard
+	if(Disaster != 1)
+	{
+		MakeGoal();
+
+		while(MeetGoal())
+		{
+			MakeGoal();
+
+			if(Empties < 1) break;
+
+			// Check to see if we can fulfill a contract
+			CheckContracts();
+		}
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Make a goal for the AI player						MakeGoal() = 1/0 : TRUE/FALSE
+function MakeGoal()
+{
+	var Count = 1;	// For looping
+
+	if(Player[Turn].TechRes == 0)
+	{
+		Player[Turn].Goal = "Struct";
+		Player[Turn].GoalStructure = "Residential";
+		Player[Turn].GoalNumber = 1;
+		return(1);
+	}
+
+	// Always go for an affordable contract but don't override other contract goals
+	while(Count<4)
+	{
+		if(Player[Turn].Goal != "Contract"&(Contract[Count].Structure == "Residential"|Contract[Count].Structure == "Industrial"|Contract[Count].Structure == "Commercial"))
+		{
+			if(Afford(Contract[Count].Structure,Contract[Count].Number))
+			{
+				Player[Turn].Goal = "Contract";
+				Player[Turn].GoalStructure = Contract[Count].Structure;
+				Player[Turn].GoalNumber = Contract[Count].Number;
+				Player[Turn].GoalContract = Count;
+				return(1);
+			}
+		}
+
+		Count++
+	}
+
+	// If we can afford Commercial do it before Industrial
+	if(Player[Turn].TechCom == 0&Afford("Commercial",1))
+	{
+		Player[Turn].Goal = "Struct";
+		Player[Turn].GoalStructure = "Commercial";
+		Player[Turn].GoalNumber = 1;
+		return(1);
+	}
+	else if(Player[Turn].TechInd == 0)
+	{
+		Player[Turn].Goal = "Struct";
+		Player[Turn].GoalStructure = "Industrial";
+		Player[Turn].GoalNumber = 1;
+		return(1);
+	}
+	else if(Player[Turn].TechCom == 0)
+	{
+		Player[Turn].Goal = "Struct";
+		Player[Turn].GoalStructure = "Commercial";
+		Player[Turn].GoalNumber = 1;
+		return(1);
+	}
+
+	Count = 1;	// Reset Count
+
+	// Always go for an affordable contract but don't override other contract goals
+	while(Count<4)
+	{
+		if(Player[Turn].Goal != "Contract"&(Contract[Count].Structure == "Recreational"|Contract[Count].Structure == "Government"))
+		{
+			if(Afford(Contract[Count].Structure,Contract[Count].Number))
+			{
+				Player[Turn].Goal = "Contract";
+				Player[Turn].GoalStructure = Contract[Count].Structure;
+				Player[Turn].GoalNumber = Contract[Count].Number;
+				Player[Turn].GoalContract = Number;
+				return(1);
+			}
+		}
+
+		Count++
+	}
+
+
+	if(Player[Turn].TechGov == 0)
+	{
+		Player[Turn].Goal = "Struct";
+		Player[Turn].GoalStructure = "Government";
+		Player[Turn].GoalNumber = 1;
+		return(1);
+	}
+
+	var Points = 0,	// To compare contract points
+		Number;		// Hold a contract number
+
+	Count = 1;	// Reset Count
+
+	// Now go for the big pay-off
+	while(Count<4)
+	{
+		if(Points<Contract[Count].Points)
+		{
+			Number = Count;
+			Points = Contract[Number].Points;
+		}
+
+		Count++
+	}
+
+	Player[Turn].Goal = "Contract";
+	Player[Turn].GoalStructure = Contract[Number].Structure;
+	Player[Turn].GoalNumber = Contract[Number].Number;
+	Player[Turn].GoalContract = Number;
+	return(1);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Meet a goal for an AI player							MeetGoal() = 1 if met else 0
+function MeetGoal()
+{
+	var Found;	// Will hold the results of FindSpace
+
+	if(Afford(Player[Turn].GoalStructure,1))
+	{
+
+		do
+		{
+			Found = FindSpace();
+		}
+		while(Found == 2&Afford(Player[Turn].GoalStructure,1));
+
+		if(Found)
+		{
+			//alert("Building: " + Player[Turn].GoalStructure + " w/ " + ActionNs);	// Debug
+			if(Afford(Player[Turn].GoalStructure,1))
+			{
+				Build(Player[Turn].GoalStructure);
+				return(1);
+			}
+			else return(0);
+		}
+	}
+
+	return(0);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// This will find or make space for AI to build		FindSpace() = 1 for TRUE, 0 if FALSE, 2 if Try again
+function FindSpace()
+{
+	var Stop = 0,	// Return Value
+		Skip;	// Used to find places to skip
+
+	Dir = new Object;	// Used to find good spots.
+
+	for(Row=0; Row < Rows; Row++)
+	{
+		for(Col=0; Col < Columns; Col++)
+		{
+			Subs = Row + "X" + Col;
+
+
+			// If we are sorrounded we can obviously build!
+			if(Grid[Subs].Structure == "Empty"&CheckSpace(Row,Col,1) == 4&AdjRoad(Row,Col))
+			{
+				Stop = 1;
+				break;
+			}
+
+			if(Grid[Subs].Structure == "Empty"&AdjRoad(Row,Col,1))
+			{
+				Skip = 0;
+
+				// If this is the last tile on the board it's got to be good!
+				if(Empties == 1)
+				{
+					Stop = 1;
+					break;
+				}
+
+
+				// Avoid building beside a bridge!
+				if(ByRoad(Row,Col,1) == 0)
+				{
+					Skip = 1;
+				}
+
+				// If somebody has built there before it should be a good spot!
+				//if(Grid[Subs].Image == "Dem.gif")
+				//{
+				//	Stop = 1;
+				//	break;
+				//}
+
+				// Avoid road corners!!!!
+				// This code will set Skip to = 1 if the tile is above, below, or beside a corner
+				if(Row > 0)
+				{
+					if(Grid[eval(Row - 1) + "X" + Col].Image == "RoadNW.gif"|Grid[eval(Row - 1) + "X" + Col].Image == "RoadNE.gif") Skip = 1;
+					else if(Col > 0)
+					{
+						if(Grid[eval(Row - 1) + "X" + eval(Col - 1)].Image == "RoadNW.gif") Skip = 1;
+					}
+
+					if(Col < Columns - 1)
+					{
+						if(Grid[eval(Row - 1) + "X" + eval(Col + 1)].Image == "RoadNE.gif") Skip = 1;
+					}
+				}
+
+				if(Row < Rows - 1)
+				{
+					if(Grid[eval(Row + 1) + "X" + Col].Image == "RoadSW.gif"|Grid[eval(Row + 1) + "X" + Col].Image == "RoadSE.gif") Skip = 1;
+					else if(Col > 0)
+					{
+						if(Grid[eval(Row + 1) + "X" + eval(Col - 1)].Image == "RoadSW.gif") Skip = 1;
+					}
+
+					if(Col < Columns - 1)
+					{
+						if(Grid[eval(Row + 1) + "X" + eval(Col + 1)].Image == "RoadSE.gif") Skip = 1;
+					}
+				}
+
+				if(Col > 0)
+				{
+					if(Grid[Row + "X" + eval(Col - 1)].Image == "RoadSW.gif"|Grid[Row + "X" + eval(Col - 1)].Image == "RoadNW.gif") Skip = 1;
+				}
+
+				if(Col < Columns - 1)
+				{
+					if(Grid[Row + "X" + eval(Col + 1)].Image == "RoadNE.gif"|Grid[Row + "X" + eval(Col + 1)].Image == "RoadSE.gif") Skip = 1;
+				}
+
+				//alert(Skip + " Subs: " + Subs); // Debug
+
+				//// Don't avoid map corners
+				//if((Row == 0&Col == 0)|(Row == Rows - 1&Col == Columns - 1)|(Row == 0&Col == Columns - 1)|(Row == Rows - 1&Col == 0))
+				//{
+				//    Stop = 1;
+				//	break;
+				//}
+
+
+				// Make sure we don't cut-off tiles ////////////////////////////////////
+				if(Skip != 1)
+				{
+					// Debug("Subs: " + Subs); // Debug
+
+					if(Row > 0)
+					{
+						if(Grid[eval(Row - 1) + "X" + Col].Structure == "Empty"&AdjRoad(Row - 1,Col))
+						{
+							Stop = 1;
+							break;
+						}
+						else if(Col > 0)
+						{
+							if(Grid[eval(Row - 1) + "X" + eval(Col - 1)].Structure == "Empty"&AdjRoad(Row - 1,Col - 1))
+							{
+								Stop = 1;
+								break;
+							}
+						} // If we are in the first column and beside a road we found a good one!
+						else if(Grid[Row + "X" + eval(Col + 1)].Structure == "Road")
+						{
+							Stop = 1;
+							break;
+						}
+
+						if(Col < Columns - 1)
+						{
+							if(Grid[eval(Row - 1) + "X" + eval(Col + 1)].Structure == "Empty"&AdjRoad(Row - 1,Col + 1))
+							{
+								Stop = 1;
+								break;
+							}
+						}	// If we are in the last column and beside a road we found a good one!
+						else if(Grid[Row + "X" + eval(Col - 1)].Structure == "Road")
+						{
+							Stop = 1;
+							break;
+						}
+					}	// If we are in the first row and above a road we found a good one!
+					else if(Grid[eval(Row + 1) + "X" + Col].Structure == "Road")
+					{
+						Stop = 1;
+						break;
+					}
+
+					if(Row < Rows - 1)
+					{
+						if(Grid[eval(Row + 1) + "X" + Col].Structure == "Empty"&AdjRoad(Row + 1,Col))
+						{
+							Stop = 1;
+							break;
+						}
+						else if(Col > 0)
+						{
+							if(Grid[eval(Row + 1) + "X" + eval(Col - 1)].Structure == "Empty"&AdjRoad(Row + 1,Col - 1))
+							{
+								Stop = 1;
+								break;
+							}
+						}	// If we are in the first column and beside a road we found a good one!
+						else if(Grid[Row + "X" + eval(Col + 1)].Structure == "Road")
+						{
+							Stop = 1;
+							break;
+						}
+
+						if(Col < Columns - 1)
+						{
+							if(Grid[eval(Row + 1) + "X" + eval(Col + 1)].Structure == "Empty"&AdjRoad(Row + 1,Col + 1))
+							{
+								Stop = 1;
+								break;
+							}
+						}	// If we are in the last column and beside a road we found a good one!
+						else if(Grid[Row + "X" + eval(Col - 1)].Structure == "Road")
+						{
+							Stop = 1;
+							break;
+						}
+					}	// If we are in the last row and below a road we found a good one!
+					else if(Grid[eval(Row - 1) + "X" + Col].Structure == "Road")
+					{
+						Stop = 1;
+						break;
+					}
+
+					if(Col > 0)
+					{
+						if(Grid[Row + "X" + eval(Col - 1)].Structure == "Empty"&AdjRoad(Row,Col - 1))
+						{
+							Stop = 1;
+							break;
+						}
+					}	// If we are in the first column and beside a road we found a good one!
+					else if(Grid[Row + "X" + eval(Col + 1)].Structure == "Road")
+					{
+						Stop = 1;
+						break;
+					}
+
+					if(Col < Columns - 1)
+					{
+						if(Grid[Row + "X" + eval(Col + 1)].Structure == "Empty"&AdjRoad(Row,Col + 1))
+						{
+							Stop = 1;
+							break;
+						}
+					}	// If we are in the last column and beside a road we found a good one!
+					else if(Grid[Row + "X" + eval(Col - 1)].Structure == "Road")
+					{
+						Stop = 1;
+						break;
+					}
+				}
+			}
+		}
+
+		if(Stop == 1) break;
+	}
+
+	// Try building a road or bridge if we can't build what-ever else
+	if(Stop == 1) ClickTile("ImgGrid" + Subs,Row,Col);
+	else if(Afford("Road")&Empties != 1)
+	{
+		for(Row=0; Row < Rows; Row++)
+		{
+			for(Col=0; Col < Columns; Col++)
+			{
+				Subs = Row + "X" + Col;
+
+				if(Grid[Subs].Structure == "Empty"&ByRoad(Row,Col))
+				{
+					ClickTile("ImgGrid" + Subs,Row,Col);
+					Build("Road");
+					Stop = 2;
+					break;
+				}
+			}
+
+			if(Stop == 2) break;
+		}
+	}
+
+	// If we didn't build a road or a building there must be a place for a bridge
+	if(Stop != 1&Stop != 2&Afford("Bridge"))
+	{
+		for(Row=0; Row < Rows; Row++)
+		{
+			for(Col=0; Col < Columns; Col++)
+			{
+				Subs = Row + "X" + Col;
+
+				if(ByRoad(Row,Col)&(Grid[Subs].Image == "RiverH.gif"|Grid[Subs].Image == "RiverV.gif"))
+				{
+					Dir[0] = 0;
+					Dir[1] = 0;
+
+					if(Grid[Subs].Image == "RiverH.gif")
+					{
+						if(Row != 0)
+						{
+							if(Grid[eval(Row - 1) + "X" + Col].Structure != "Empty") Dir[0] = 1;
+							else Dir[0] = 0;
+						}
+						else Dir[0] = 1;
+
+						if(Row != Rows - 1)
+						{
+							if(Grid[eval(Row + 1) + "X" + Col].Structure != "Empty") Dir[1] = 1;
+							else Dir[1] = 0;
+						}
+						else Dir[1] = 1;
+					}
+					else
+					{
+						if(Col != 0)
+						{
+							if(Grid[Row + "X" + eval(Col - 1)].Structure != "Empty") Dir[0] = 1;
+							else Dir[0] = 0;
+						}
+						else Dir[0] = 1;
+
+						if(Col != Columns - 1)
+						{
+							if(Grid[Row + "X" + eval(Col + 1)].Structure != "Empty") Dir[1] = 1;
+							else Dir[1] = 0;
+						}
+						else Dir[1] = 1;
+					}
+
+					if(Dir[0] + Dir[1] == 1)
+					{
+						ClickTile("ImgGrid" + Subs,Row,Col);
+						Stop = 2;
+						break;
+					}
+				}
+			}
+
+			if(Stop == 2) break;
+		}
+	}
+
+	return(Stop);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Check to see of Computer can fill a contract		CheckContracts()
+function CheckContracts()
+{
+	var Count = 1,	// For looping
+		Number,		// The number needed for a contract
+		Q,			// The Structure Q number
+		SSubs;		// Subscript for struct Q
+
+	while(Count<4)
+	{
+		Number = Contract[Count].Number;
+		Q = 1;
+
+		if(Contract[Count].Structure == "Residential"&Contract[Count].Number <= Player[Turn].NumRes)
+		{
+			while(Number)
+			{
+				SSubs = Turn + "X" + Q;
+				//alert("Res SSubs: " + SSubs + " NumRes: " + Player[Turn].NumRes);	// Debug
+				ClickTile("ImgGrid" + Res[SSubs].Row + "X" + Res[SSubs].Col,Res[SSubs].Row,Res[SSubs].Col);
+				Q++;
+				Number--;
+			}
+
+			Bid(Count);
+		}
+		else if(Contract[Count].Structure == "Industrial"&Contract[Count].Number <= Player[Turn].NumInd)
+		{
+			while(Number)
+			{
+				SSubs = Turn + "X" + Q;
+				//alert("Ind SSubs: " + SSubs + " NumInd " + Player[Turn].NumInd);	// Debug
+				ClickTile("ImgGrid" + Ind[SSubs].Row + "X" + Ind[SSubs].Col,Ind[SSubs].Row,Ind[SSubs].Col);
+				Q++;
+				Number--;
+			}
+
+			Bid(Count);
+		}
+		else if(Contract[Count].Structure == "Commercial"&Contract[Count].Number <= Player[Turn].NumCom)
+		{
+			while(Number)
+			{
+				SSubs = Turn + "X" + Q;
+				//alert("Com SSubs: " + SSubs + " NumCom " + Player[Turn].NumCom);	// Debug
+				ClickTile("ImgGrid" + Com[SSubs].Row + "X" + Com[SSubs].Col,Com[SSubs].Row,Com[SSubs].Col);
+				Q++;
+				Number--;
+			}
+
+			Bid(Count);
+		}
+		else if(Contract[Count].Structure == "Government"&Contract[Count].Number <= Player[Turn].NumGov)
+		{
+			while(Number)
+			{
+				SSubs = Turn + "X" + Q;
+				//alert("Gov SSubs: " + SSubs + " NumGov " + Player[Turn].NumGov);	// Debug
+				ClickTile("ImgGrid" + Gov[SSubs].Row + "X" + Gov[SSubs].Col,Gov[SSubs].Row,Gov[SSubs].Col);
+				Q++;
+				Number--;
+			}
+
+			Bid(Count);
+		}
+		else if(Contract[Count].Structure == "Educational"&Contract[Count].Number <= Player[Turn].NumEdu)
+		{
+			while(Number)
+			{
+				SSubs = Turn + "X" + Q;
+				//alert("Edu SSubs: " + SSubs + " NumEdu " + Player[Turn].NumEdu);	// Debug
+				ClickTile("ImgGrid" + Edu[SSubs].Row + "X" + Edu[SSubs].Col,Edu[SSubs].Row,Edu[SSubs].Col);
+				Q++;
+				Number--;
+			}
+
+			Bid(Count);
+		}
+
+		Count++;
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Remove a structure from struct Q	and optionally destroy	DQ(Row,Col,Destroy)
+function DQ(Row,Col,Destroy)
+{
+	var Subs = Row + "X" + Col,
+		SSubs;
+
+	//alert("DQ: " + Subs);	// Debug
+
+	// Only DeQueue for Computer players.
+	if(Grid[Subs].Owner == "NP"|Grid[Subs].Owner == "None");
+	else if(Player[Grid[Subs].Owner].Type == "C")
+	{
+		if(Grid[Subs].Structure == "Residential")
+		{
+			for(var Count = Player[Grid[Subs].Owner].NumRes; Count; Count--)
+			{
+				SSubs = Grid[Subs].Owner + "X" + Count;
+				//Debug("RSubs: " + SSubs + " Subs: " + Subs);	// Debug
+				if(Res[SSubs].Row == Row&Res[SSubs].Col == Col)
+				{
+					Res[SSubs].Row = Res[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumRes].Row;
+					Res[SSubs].Col = Res[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumRes].Col;
+					delete Res[SSubs];
+					Player[Turn].NumRes--;
+					break;
+				}
+			}
+		}
+		else if(Grid[Subs].Structure == "Industrial")
+		{
+			for(var Count = Player[Grid[Subs].Owner].NumInd; Count; Count--)
+			{
+				SSubs = Grid[Subs].Owner + "X" + Count;
+
+				//Debug("SSubs: " + SSubs + " Subs: " + Subs);	// Debug
+				if(Ind[SSubs].Row == Row&Ind[SSubs].Col == Col)
+				{
+					Ind[SSubs].Row = Ind[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumInd].Row;
+					Ind[SSubs].Col = Ind[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumInd].Col;
+					delete Ind[Subs];
+					Player[Turn].NumInd--;
+					break;
+				}
+			}
+		}
+		else if(Grid[Subs].Structure == "Commercial")
+		{
+			for(var Count = Player[Grid[Subs].Owner].NumCom; Count; Count--)
+			{
+				SSubs = Grid[Subs].Owner + "X" + Count;
+
+				//Debug("SSubs: " + SSubs + " Subs: " + Subs);	// Debug
+				if(Com[SSubs].Row == Row&Com[SSubs].Col == Col)
+				{
+					Com[SSubs].Row = Com[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumCom].Row;
+					Com[SSubs].Col = Com[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumCom].Col;
+					delete Com[SSubs];
+					Player[Turn].NumCom--;
+					break;
+				}
+			}
+		}
+		else if(Grid[Subs].Structure == "Government")
+		{
+			for(var Count = Player[Grid[Subs].Owner].NumGov; Count; Count--)
+			{
+				SSubs = Grid[Subs].Owner + "X" + Count;
+				//Debug("SSubs: " + SSubs + " Subs: " + Subs);	// Debug
+				if(Gov[SSubs].Row == Row&Gov[SSubs].Col == Col)
+				{
+					Gov[SSubs].Row = Gov[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumGov].Row;
+					Gov[SSubs].Col = Gov[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumGov].Col;
+					delete Gov[SSubs];
+					Player[Turn].NumGov--;
+					break;
+				}
+			}
+		}
+		else if(Grid[Subs].Structure == "Recreational")
+		{
+			for(var Count = Player[Grid[Subs].Owner].NumRec; Count; Count--)
+			{
+				SSubs = Grid[Subs].Owner + "X" + Count;
+				//Debug("SSubs: " + SSubs + " Subs: " + Subs);	// Debug
+				if(Rec[SSubs].Row == Row&Rec[SSubs].Col == Col)
+				{
+					Rec[SSubs].Row = Rec[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumRec].Row;
+					Rec[SSubs].Col = Rec[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumRec].Col;
+					delete Rec[SSubs];
+					Player[Turn].NumRec--;
+					break;
+				}
+			}
+		}
+		else if(Grid[Subs].Structure == "Educational")
+		{
+			for(var Count = Player[Grid[Subs].Owner].NumEdu; Count; Count--)
+			{
+				SSubs = Grid[Subs].Owner + "X" + Count;
+				//Debug("SSubs: " + SSubs + " Subs: " + Subs);	// Debug
+				if(Edu[SSubs].Row == Row&Edu[SSubs].Col == Col)
+				{
+					Edu[SSubs].Row = Edu[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumEdu].Row;
+					Edu[SSubs].Col = Edu[Grid[Subs].Owner + "X" + Player[Grid[Subs].Owner].NumEdu].Col;
+					delete Edu[SSubs];
+					Player[Turn].NumEdu--;
+					break;
+				}
+			}
+		}
+	}
+
+	if(Destroy)
+	{
+			Grid[Subs].Owner = "None";
+			Grid[Subs].Structure = "Empty";
+			Grid[Subs].alt = "Empty";
+			Grid[Subs].Image = "Dem.gif";
+			Empties++;
+	}
+}
+
+//////******************************************************************************
+//////   	DRAW CODE - - -  				- - - 			- - - DRAW CODE
+//////******************************************************************************
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Create the Main Game Screen Output HTML Output		Draw()
+function Draw()
+{
+	if(Empties < 1)
+	{
+		Output = "<html><head></head>";
+		Output += "<body bgcolor=#FFFFFF text=#000000>";
+		Output += "<center><form name='Score'><font size='5' face='Times New Roman'><H1>Score</H1></font>";
+
+		// Insertion sort, Yea!!
+		for(Count=1; Count <= PlayerNumber; Count++)
+		{
+			PlayerCopy = new Object;
+			PlayerCopy = Player[Count];
+			var Count2 = Count - 1;
+
+			while(Count2 > 0 && Player[Count2].Score + Player[Count2].Gold * 2 + Player[Count2].Wood + Player[Count2].Steel + Player[Count2].Concrete + Player[Count2].Glass < PlayerCopy.Score + PlayerCopy.Gold * 2 + PlayerCopy.Wood + PlayerCopy.Steel + PlayerCopy.Concrete + PlayerCopy.Glass)
+			{
+				Player[Count2 + 1] = Player[Count2];
+				Count2--;
+			}
+			Player[Count2 + 1] = PlayerCopy
+		}
+
+		Output += "<font size='3' face='Times New Roman'><table><tr><td><h2>Rank </h2></td><td><h2>Name </h2></td><td><h2>Score </h2></td><td><img src='Gold.gif' alt='Gold'>";
+		Output += "</td><td><img src='Wood.gif' alt='Wood'></td><td><img src='Steel.gif' alt='Steel'></td><td><img src='Concrete.gif' alt='Concrete'></td><td><img src='Glass.gif' alt='Glass'></td></tr>";
+
+		for(Count=1; Count<PlayerNumber + 1; Count++)
+		{
+			Output += "<tr><td><h3>#" + Count + "</h3></td><td><h3>" + Player[Count].Name + "</h3></td><td align='right'><h3>" + Player[Count].Score;
+			Output += "</h3></td><td align='right'><h3>" + Player[Count].Gold;
+			Output += "</h3></td><td align='right'><h3>" + Player[Count].Wood + "</h3></td><td align='right'><h3>" + Player[Count].Steel + "</h3></td><td align='right'><h3>";
+			Output += Player[Count].Concrete + "</h3></td><td align='right'><h3>" + Player[Count].Glass + "</h3></td></tr>";
+		}
+
+		Output += "</table></font><font size='5' face='Times New Roman'><H1>Credits</H1></font>";
+		Output += "<font size='5' face='Times New Roman'><p>Natural Disaster by ECG Studios</p>";
+		Output += "<p>Producer/Designer/Programmer - Forest J. Handford</p>";
+		Output += "<p>Tile Artist - Jill Townsend Wilkinson</p>";
+		Output += "<p>Disaster Artist - Alejandro Perez</p>";
+		Output += "<input type='button' value='Exit' onclick='parent.window.close()'>";
+		Output += "</font></form></center></body></html>";
+	}
+	else
+	{
+		Output = "<html><head></head>";
+		Output += "<body bgcolor=#FFFFFF text=#000000>";
+		Output += "<table width='100%'><td align=center><center><form name='BuildForm' type=button>";
+		Output += "<input type='button' value='Exit' onclick='parent.Exit()'>";
+		Output += "<input type='button' value='Instructions' onclick='parent.Instruct()'>";
+
+		if(Player[Turn].Type == "H")
+		{
+			Output += "<input type=button name=ChangeTurn value='Change/End Turn' onclick='parent.ChangeTurn()'>";
+			Output += "<input type=button name=Demolish value='Demolish' onclick='parent.DemoStruct()'>";
+
+			if(PlayerNumber != 1)
+			{
+				Output += "<input type=button name=Sell value='Sell' onclick='parent.SellScreen()'>";
+				Output += "<input type=button name=Trade value='Trade' onclick='parent.TradeScreen()'>";
+			}
+
+			Output += "<input type=button name=Contracts value='Contracts' onclick='parent.ContractsPage()'>";
+
+			if(Disaster != 1)
+			{
+				Output += "<select name=Structure size=1><option value=Road>Road 1C</option>";
+				Output += "<option value=Residential selected>Residential 1W</option>";
+
+				if(Player[Turn].TechRes)
+				{
+					Output += "<option value=Industrial>Industrial 1S 1C</option>";
+					Output += "<option value=Commercial>Commercial 1C 1G</option>";
+
+					if(Player[Turn].TechCom&Player[Turn].TechInd)
+					{
+						Output += "<option value=Government>Government 1W 1S 1G</option>";
+						Output += "<option value=Recreational>Recreational 1W 2S 1G</option>";
+
+						if(Player[Turn].TechGov) Output += "<option value=Educational>Educational 1W 1C 1G</option>";
+					}
+				}
+
+				Output += "</select><input type=button name=Build ";
+				Output += "value='Build' onclick='parent.Build()'>";
+			}
+		}
+		else Output += "<input type=button name=ChangeTurn value='Continue' onclick='parent.ChangeTurn()'>";
+
+		Output += "<font size='3' face='Times New Roman'><br>Current Player: <b>" + Player[Turn].Name + " &nbsp;&nbsp;</b> ";
+		Output += "<img src='Wood.gif' alt='Wood'>: <b>" + Player[Turn].Wood + " &nbsp;&nbsp;</b>";
+		Output += "<img src='Steel.gif' alt='Steel'>: <b>" + Player[Turn].Steel + " &nbsp;&nbsp;</b>";
+		Output += "<img src='Concrete.gif' alt='Concrete'>: <b>" + Player[Turn].Concrete + " &nbsp;&nbsp;</b>";
+		Output += "<img src='Glass.gif' alt='Glass'>: <b>" + Player[Turn].Glass + " &nbsp;&nbsp;</b>";
+		Output += "<img src='Gold.gif' alt='Gold'>: <b>" + Player[Turn].Gold + " &nbsp;&nbsp;</b>";
+		Output += "Score: <b>" + Player[Turn].Score + " &nbsp;&nbsp;</b><br></font>";
+
+		// Loop Maximized for speed!
+		for(var Count=0; Count<Rows; Count++)
+		{
+			for(var Col=0; Col<Columns; Col++)
+			{
+				var Subs = Count + "X" + Col,
+					ImgName = "ImgGrid" + Subs;
+
+				Grid[Subs].ImageDisplay = Grid[Subs].Image;
+				if(Player[Turn].Type == "H") Output += "<img src=" + Grid[Subs].Image + " width=54 height=54 name=" + ImgName + " onmouseover=parent.OverTile(" + ImgName + "," + Count + "," + Col + ") onclick=parent.ClickTile(" + ImgName + ","  + Count + "," + Col + ") onmouseout=parent.OutTile(" + ImgName + ","  + Count + "," + Col + ") alt='" + Grid[Subs].alt + "'>";
+				else Output += "<img src=" + Grid[Subs].Image + " width=54 height=54 name=" + ImgName + " alt='" + Grid[Subs].alt + "'>";
+			}
+			Output += "<br>";
+		}
+
+		Output += "</form></td></table></center></body></html>";
+	}
+
+	Main.document.open();
+	Main.document.write(Output);
+	Main.document.close();
+
+}
+
+//////******************************************************************************
+//////   	TILE CODE - - -  				- - - 			- - - TILE CODE
+//////******************************************************************************
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Executed when the mouse is over a tile					OverTile()
+function OverTile(Image,Row,Col)
+{
+	Subs = Row + "X" + Col;
+
+	if(Grid[Subs].Owner == Turn)
+	{
+		if(Grid[Subs].ImageDisplay != "ActionC.gif")
+		{
+			Image.src = "ActionC.gif";
+			Image.alt = "Click to select";
+		}
+	}
+	else if(Grid[Subs].Owner != "None"&Grid[Subs].Owner != "NP")
+	{
+		if(Grid[Subs].ImageDisplay != "ActionO.gif")
+		{
+			Image.src = "ActionO.gif";
+			Image.alt = "Click to select";
+		}
+	}
+	else if((Grid[Subs].Structure == "Empty"|Grid[Subs].Structure == "River")&AdjRoad(Row,Col)&Disaster != 1)
+	{
+		if(Grid[Subs].Structure == "River")
+		{
+			if(Grid[Subs].Image == "RiverV.gif"|Grid[Subs].Image == "RiverH.gif")
+			{
+				if(ByRoad(Row,Col))
+				{
+					if(Grid[Subs].Image == "RiverV.gif") Image.src = "BridgeH.gif";
+					else Image.src = "BridgeV.gif";
+
+					Image.alt = "Click to select";
+				}
+			}
+		}
+		else if(Grid[Subs].ImageDisplay != "ActionN.gif")
+		{
+			Image.src = "ActionN.gif";
+			Image.alt = "Click to select";
+		}
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Executed when a tile is clicked						ClickTile()
+function ClickTile(Image,Row,Col)
+{
+	Subs = Row + "X" + Col;
+
+	if(Grid[Subs].Owner == Turn)
+	{
+		if(Grid[Subs].ImageDisplay == "ActionC.gif")
+		{
+			Grid[Subs].ImageDisplay = Grid[Subs].Image;
+			Image.src = Grid[Subs].Image;
+			Image.alt = "Click to select";
+			if(ActionC[ActionCs].Row == Row&ActionC[ActionCs].Col == Col) delete ActionC[ActionCs];
+			else
+			{
+				for(var Count = ActionCs - 1; Count; Count--)
+				{
+					if(ActionC[Count].Row == Row&ActionC[Count].Col == Col)
+					{
+						ActionC[Count].Row = ActionC[ActionCs].Row;
+						ActionC[Count].Col = ActionC[ActionCs].Col;
+						delete ActionC[ActionCs];
+						Count = 1;
+					}
+				}
+			}
+			ActionCs--;
+		}
+		else
+		{
+			Grid[Subs].ImageDisplay = "ActionC.gif";
+			Image.src = "ActionC.gif";
+			Image.alt = "Click to deselect";
+			ActionC[++ActionCs] = new Object;
+			ActionC[ActionCs].Row = Row;
+			ActionC[ActionCs].Col = Col;
+		}
+	}
+	else if(Grid[Subs].Owner != "None"&Grid[Subs].Owner != "NP")
+	{
+		if(Grid[Subs].ImageDisplay == "ActionO.gif")
+		{
+			Grid[Subs].ImageDisplay = Grid[Subs].Image;
+			Image.src = Grid[Subs].Image;
+			Image.alt = "Click to select";
+			if(ActionO[ActionOs].Row == Row&ActionO[ActionOs].Col == Col) delete ActionO[ActionOs];
+			else
+			{
+				for(var Count = ActionOs - 1; Count; Count--)
+				{
+					if(ActionO[Count].Row == Row&ActionO[Count].Col == Col)
+					{
+						ActionO[Count].Row = ActionO[ActionOs].Row;
+						ActionO[Count].Col = ActionO[ActionOs].Col;
+						delete ActionO[ActionOs];
+						Count = 1;
+					}
+				}
+			}
+			ActionOs--;
+		}
+		else
+		{
+			Grid[Subs].ImageDisplay = "ActionO.gif";
+			Image.src = "ActionO.gif";
+			Image.alt = "Click to deselect";
+			ActionO[++ActionOs] = new Object;
+			ActionO[ActionOs].Row = Row;
+			ActionO[ActionOs].Col = Col;
+		}
+	}
+	else if((Grid[Subs].Structure == "Empty"|Grid[Subs].Structure == "River")&AdjRoad(Row,Col)&Disaster != 1)
+	{
+		if(Grid[Subs].Structure == "River")
+		{
+			if(Grid[Subs].Image == "RiverV.gif"|Grid[Subs].Image == "RiverH.gif")
+			{
+				if(ByRoad(Row,Col))
+				{
+					if(Grid[Subs].Image == "RiverV.gif") Image.src = "BridgeH.gif";
+					else Image.src = "BridgeV.gif";
+
+					ActionN[++ActionNs] = new Object;
+					ActionN[ActionNs].Row = Row;
+					ActionN[ActionNs].Col = Col;
+					Build("Bridge");
+				}
+			}
+		}
+		else
+		{
+			if(Grid[Subs].ImageDisplay == "ActionN.gif")
+			{
+				Grid[Subs].ImageDisplay = Grid[Subs].Image;
+				Image.src = Grid[Subs].Image;
+				Image.alt = "Click to select";
+				if(ActionN[ActionNs].Row == Row&ActionN[ActionNs].Col == Col) delete ActionN[ActionNs];
+				else
+				{
+					for(var Count = ActionNs - 1; Count; Count--)
+					{
+						if(ActionN[Count].Row == Row&ActionN[Count].Col == Col)
+						{
+							ActionN[Count].Row = ActionN[ActionNs].Row;
+							ActionN[Count].Col = ActionN[ActionNs].Col;
+							delete ActionN[ActionNs];
+							Count = 1;
+						}
+					}
+				}
+				ActionNs--;
+			}
+			else
+			{
+				Grid[Subs].ImageDisplay = "ActionN.gif";
+				Image.src = "ActionN.gif";
+				Image.alt = "Click to deselect";
+				ActionN[++ActionNs] = new Object;
+				ActionN[ActionNs].Row = Row;
+				ActionN[ActionNs].Col = Col;
+			}
+		}
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Executed When mouseover ends							OutTile()
+function OutTile(Image,Row,Col)
+{
+	Subs = Row + "X" + Col;
+	Image.src = Grid[Subs].ImageDisplay;
+}
+
+//////******************************************************************************
+//////   	ADJACENT CODE - - -  				- - - 			- - - ADJACENT CODE
+//////******************************************************************************
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Determines if tile is adjacent to a road				AdjRoad(Row,Col,End)
+function AdjRoad(Row,Col,End)
+{
+	// End is an optional flag, if set only look for Roads that aren't at the end
+	var SaveRow = Row,
+		SaveCol = Col,
+		Subs;
+
+	Subs = Row + "X" + Col;
+
+
+	if(Row>0)
+	{
+		Subs = eval(Row - 1) + "X" + Col;
+
+		if(Grid[Subs].Structure == "Road"|Grid[Subs].Structure == "Bridge")
+		{
+			if(End)
+			{
+				// Don't have AI Build by Bridges
+				if(Grid[Subs].Image != "RoadV.gif") return(1);
+				else return(0);
+			}
+			else return(1);
+		}
+
+		if(Col>0)
+		{
+			Subs = eval(Row - 1) + "X" + eval(Col - 1);
+
+			// Don't have AI Build by Bridges
+			if(End&(Grid[Subs].End|Grid[Subs].Structure == "Bridge")) return(0);
+			else if(Grid[Subs].Structure == "Road"|Grid[Subs].Structure == "Bridge") return(1);
+
+		}
+
+		if(Col<Columns - 1)
+		{
+			Subs = eval(Row - 1) + "X" + eval(Col + 1);
+
+			// Don't have AI Build by Bridges
+			if(End&(Grid[Subs].End|Grid[Subs].Structure == "Bridge")) return(0);
+			else if(Grid[Subs].Structure == "Road"|Grid[Subs].Structure == "Bridge") return(1);
+		}
+	}
+
+	if(Row<Rows - 1)
+	{
+		Subs = eval(Row + 1) + "X" + Col;
+
+		if(Grid[Subs].Structure == "Road"|Grid[Subs].Structure == "Bridge")
+		{
+			if(End)
+			{
+				// Don't have AI Build by Bridges
+				if(Grid[Subs].Image != "RoadV.gif") return(1);
+				else return(0);
+			}
+			else return(1);
+		}
+
+		if(Col>0)
+		{
+			Subs = eval(Row + 1) + "X" + eval(Col - 1);
+
+			// Don't have AI Build by Bridges
+			if(End&(Grid[Subs].End|Grid[Subs].Structure == "Bridge")) return(0);
+			else if(Grid[Subs].Structure == "Road"|Grid[Subs].Structure == "Bridge") return(1);
+		}
+
+		if(Col<Columns - 1)
+		{
+			Subs = eval(Row + 1) + "X" + eval(Col + 1);
+
+			// Don't have AI Build by Bridges
+			if(End&(Grid[Subs].End|Grid[Subs].Structure == "Bridge")) return(0);
+			else if(Grid[Subs].Structure == "Road"|Grid[Subs].Structure == "Bridge") return(1);
+		}
+
+	}
+
+	if(Col>0)
+	{
+		Subs = Row + "X" + eval(Col - 1);
+
+		if(Grid[Subs].Structure == "Road"|Grid[Subs].Structure == "Bridge")
+		{
+			if(End)
+			{
+				// Don't have AI Build by Bridges
+				if(Grid[Subs].Image != "RoadH.gif") return(1);
+				else return(0);
+			}
+			else return(1);
+		}
+	}
+
+	if(Col<Columns - 1)
+	{
+		Subs = Row + "X" + eval(Col + 1);
+
+		if(Grid[Subs].Structure == "Road"|Grid[Subs].Structure == "Bridge")
+		{
+			if(End)
+			{
+				// Don't have AI Build by Bridges
+				if(Grid[Subs].Image != "RoadH.gif") return(1);
+				else return(0);
+			}
+			return(1);
+		}
+	}
+
+	return(0);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Determines if tile is beside a road					ByRoad(Row,Col,Road) = 1 for TRUE else 0
+function ByRoad(Row,Col,Road)
+{
+	var SaveRow = Row,
+		SaveCol = Col,
+		Subs;
+
+	// If the Road Flag is set ignore bridges
+
+	if(Row>0)
+	{
+		Subs = eval(Row - 1) + "X" + Col;
+
+		if(Grid[Subs].Structure == "Road") return(1);
+		else if(Road&Grid[Subs].Image == "BridgeV.gif") return(0);
+		else if(Grid[Subs].Image == "BridgeV.gif") return(1);
+	}
+
+	if(Row<Rows - 1)
+	{
+		Subs = eval(Row + 1) + "X" + Col;
+
+		if(Grid[Subs].Structure == "Road") return(1);
+		else if(Road&Grid[Subs].Image == "BridgeV.gif") return(0);
+		else if(Grid[Subs].Image == "BridgeV.gif") return(1);
+	}
+
+	if(Col>0)
+	{
+		Subs = Row + "X" + eval(Col - 1);
+
+		if(Grid[Subs].Structure == "Road") return(1);
+		else if(Road&Grid[Subs].Image == "BridgeH.gif") return(0);
+		else if(Grid[Subs].Image == "BridgeH.gif") return(1);
+	}
+
+	if(Col<Columns - 1)
+	{
+		Subs = Row + "X" + eval(Col + 1);
+
+		if(Grid[Subs].Structure == "Road") return(1);
+		else if(Road&Grid[Subs].Image == "BridgeH.gif") return(0);
+		else if(Grid[Subs].Image == "BridgeH.gif") return(1);
+	}
+
+	if(Road) return(1)
+	else return(0);
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+// If the spot is surrounded by buildings, roads, edges, un-bridgeable
+// rivers, or bridges it is a good one.
+// CheckSpace(Row,Col,Recurse) = #						CheckSpace(Row,Col,Recurse) = #
+function CheckSpace(Row,Col,Recurse)
+{
+	// Check Right
+	if(Col != Columns - 1)
+	{
+		Subs = Row + "X" + eval(Col + 1);
+
+		if(Grid[Subs].Structure == "River")
+		{
+			if(Grid[Subs].Image == "RiverV.gif")
+			{
+				if(Col != Columns - 2)
+				{
+					if(Grid[Row + "X" + eval(Col + 2)].Structure == "River") Dir[0] = 1;
+					else if(Grid[Row + "X" + eval(Col + 2)].Structure == "Bridge") Dir[0] = 0;
+					else if(Grid[Row + "X" + eval(Col + 2)].Structure == "Empty")
+					{
+						if(Recurse&AdjRoad(Row,Col + 2))
+						{
+							if(CheckSpace(Row,Col + 2) > 2) Dir[0] = 1;
+						}
+						else Dir[0] = 0;
+					}
+					else Dir[0] = 1;
+				}
+				else Dir[0] = 1;
+			}
+			else Dir[0] = 1;
+		}
+		else if(Grid[Subs].Structure == "Bridge") Dir[0] = 1;
+		else if(Grid[Subs].Structure == "Empty")
+		{
+			if(Recurse&AdjRoad(Row,Col + 1))
+			{
+				if(CheckSpace(Row,Col + 1) > 2) Dir[0] = 1;
+			}
+			else Dir[0] = 0;
+		}
+		else Dir[0] = 1;
+	}
+	else Dir[0] = 1;
+
+	// Check below
+	if(Row != Rows - 1)
+	{
+		Subs = eval(Row + 1) + "X" + Col;
+
+		if(Grid[Subs].Structure == "River")
+		{
+			if(Grid[Subs].Image == "RiverH.gif")
+			{
+				if(Col != Rows - 2)
+				{
+					if(Grid[eval(Row + 2) + "X" + Col].Structure == "River") Dir[1] = 1;
+					else if(Grid[eval(Row + 2) + "X" + Col].Structure == "Bridge") Dir[1] = 0;
+					else if(Grid[eval(Row + 2) + "X" + Col].Structure == "Empty")
+					{
+						if(Recurse&AdjRoad(Row + 2,Col))
+						{
+							if(CheckSpace(Row + 2,Col) > 2) Dir[1] = 1;
+						}
+						else Dir[1] = 0;
+					}
+					else Dir[1] = 1;
+				}
+				else Dir[1] = 1;
+			}
+			else Dir[1] = 1;
+		}
+		else if(Grid[Subs].Structure == "Bridge") Dir[1] = 1;
+		else if(Grid[Subs].Structure == "Empty")
+		{
+			if(Recurse&AdjRoad(Row + 1,Col))
+			{
+				if(CheckSpace(Row + 1,Col) > 2) Dir[1] = 1;
+			}
+			else Dir[1] = 0;
+		}
+		else Dir[1] = 1;
+	}
+	else Dir[1] = 1;
+
+	// Check the left
+	if(Col != 0)
+	{
+		Subs = Row + "X" + eval(Col - 1);
+
+		if(Grid[Subs].Structure == "River")
+		{
+			if(Grid[Subs].Image == "RiverV.gif")
+			{
+				if(Col - 1 != 0)
+				{
+					if(Grid[Row + "X" + eval(Col - 2)].Structure == "River") Dir[2] = 1;
+					else if(Grid[Row + "X" + eval(Col - 2)].Structure == "Bridge") Dir[2] = 0;
+					else if(Grid[Row + "X" + eval(Col - 2)].Structure == "Empty")
+					{
+						if(Recurse&AdjRoad(Row,Col - 2))
+						{
+							if(CheckSpace(Row,Col - 2) > 2) Dir[2] = 1;
+						}
+						else Dir[2] = 0;
+					}
+					else Dir[2] = 1;
+				}
+				else Dir[2] = 1;
+			}
+			else Dir[2] = 1;
+		}
+		else if(Grid[Subs].Structure == "Bridge") Dir[2] = 1;
+		else if(Grid[Subs].Structure == "Empty")
+		{
+			if(Recurse&AdjRoad(Row,Col - 1))
+			{
+				if(CheckSpace(Row,Col - 1) > 2) Dir[2] = 1;
+			}
+			else Dir[2] = 0;
+		}
+		else Dir[2] = 1;
+	}
+	else Dir[2] = 1;
+
+	// Check Above
+	if(Row != 0)
+	{
+		Subs = eval(Row - 1) + "X" + Col;
+
+		if(Grid[Subs].Structure == "River")
+		{
+			if(Grid[Subs].Image == "RiverH.gif")
+			{
+				if(Row - 1 != 0)
+				{
+					if(Grid[eval(Row - 2) + "X" + Col].Structure == "River") Dir[3] = 1;
+					else if(Grid[eval(Row - 2) + "X" + Col].Structure == "Bridge") Dir[3] = 0;
+					else if(Grid[eval(Row - 2) + "X" + Col].Structure == "Empty")
+					{
+						if(Recurse&AdjRoad(Row - 2,Col))
+						{
+							if(CheckSpace(Row - 2,Col) > 2) Dir[3] = 1;
+						}
+						else Dir[3] = 0;
+					}
+					else Dir[3] = 1;
+				}
+				else Dir[3] = 1;
+			}
+			else Dir[3] = 1;
+		}
+		else if(Grid[Subs].Structure == "Bridge") Dir[3] = 1;
+		else if(Grid[Subs].Structure == "Empty")
+		{
+			if(Recurse&AdjRoad(Row - 1,Col))
+			{
+				if(CheckSpace(Row - 1,Col) > 2) Dir[3] = 1;
+			}
+			else Dir[3] = 0;
+		}
+		else Dir[3] = 1;
+	}
+	else Dir[3] = 1;
+
+	Subs = Row + "X" + Col;
+
+	return(Dir[0] + Dir[1] + Dir[2] + Dir[3]);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Determines if a tile is adjacent to an image				AdjImage(Image,Row,Col)
+function AdjImage(Image,Row,Col)
+{
+	var SaveRow = Row,
+		SaveCol = Col,
+		Subs;
+
+	if(Row>0)
+	{
+		Subs = eval(Row - 1) + "X" + Col;
+		if(Grid[Subs].ImageDisplay == Image) return(1);
+
+		if(Col>0)
+		{
+			Subs = eval(Row - 1) + "X" + eval(Col - 1);
+			if(Grid[Subs].ImageDisplay == Image) return(1);
+		}
+
+		if(Col<Columns - 1)
+		{
+			Subs = eval(Row - 1) + "X" + eval(Col + 1);
+			if(Grid[Subs].ImageDisplay == Image) return(1);
+		}
+	}
+
+	if(Row<Rows - 1)
+	{
+		Subs = eval(Row + 1) + "X" + Col;
+		if(Grid[Subs].ImageDisplay == Image) return(1);
+
+		if(Col>0)
+		{
+			Subs = eval(Row + 1) + "X" + eval(Col - 1);
+			if(Grid[Subs].ImageDisplay == Image) return(1);
+		}
+
+		if(Col<Columns - 1)
+		{
+			Subs = eval(Row + 1) + "X" + eval(Col + 1);
+			if(Grid[Subs].ImageDisplay == Image) return(1);
+		}
+
+	}
+
+	if(Col>0)
+	{
+		Subs = Row + "X" + eval(Col - 1);
+		if(Grid[Subs].ImageDisplay == Image) return(1);
+	}
+
+	if(Col<Columns - 1)
+	{
+		Subs = Row + "X" + eval(Col + 1);
+		if(Grid[Subs].ImageDisplay == Image) return(1);
+	}
+
+	return(0);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Determines if a tile is adjacent to a Structure			Adj(Struct,Row,Col)
+function Adj(Struct,Row,Col)
+{
+	var SaveRow = Row,
+		SaveCol = Col,
+		Subs;
+
+	if(Row>0)
+	{
+		Subs = eval(Row - 1) + "X" + Col;
+		if(Grid[Subs].Structure == Struct) return(1);
+
+		if(Col>0)
+		{
+			Subs = eval(Row - 1) + "X" + eval(Col - 1);
+			if(Grid[Subs].Structure == Struct) return(1);
+		}
+
+		if(Col<Columns - 1)
+		{
+			Subs = eval(Row - 1) + "X" + eval(Col + 1);
+			if(Grid[Subs].Structure == Struct) return(1);
+		}
+	}
+
+	if(Row<Rows - 1)
+	{
+		Subs = eval(Row + 1) + "X" + Col;
+		if(Grid[Subs].Structure == Struct) return(1);
+
+		if(Col>0)
+		{
+			Subs = eval(Row + 1) + "X" + eval(Col - 1);
+			if(Grid[Subs].Structure == Struct) return(1);
+		}
+
+		if(Col<Columns - 1)
+		{
+			Subs = eval(Row + 1) + "X" + eval(Col + 1);
+			if(Grid[Subs].Structure == Struct) return(1);
+		}
+
+	}
+
+	if(Col>0)
+	{
+		Subs = Row + "X" + eval(Col - 1);
+		if(Grid[Subs].Structure == Struct) return(1);
+	}
+
+	if(Col<Columns - 1)
+	{
+		Subs = Row + "X" + eval(Col + 1);
+		if(Grid[Subs].Structure == Struct) return(1);
+	}
+
+	return(0);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This will determine if the player can affford to build a structure	Afford(Struct,Number)
+function Afford(Struct,Number)
+{
+	var Wood = Player[Turn].Wood,	// Store the player's values
+		Steel = Player[Turn].Steel,
+		Concrete = Player[Turn].Concrete,
+		Glass = Player[Turn].Glass,
+		Gold = Player[Turn].Gold;
+
+	if(!Number) Number = 1;
+
+	if(Struct == "Bridge")
+	{
+		while(Number)
+		{
+			if(Concrete) Concrete--;
+			else Gold--;
+
+			if(Concrete) Concrete--;
+			else Gold--;
+
+			Number--;
+		}
+	}
+	else if(Struct == "Road")
+	{
+		while(Number)
+		{
+			if(Concrete) Concrete--;
+			else Gold--;
+
+			Number--;
+		}
+	}
+	else if(Struct == "Residential")
+	{
+		while(Number)
+		{
+			if(Wood) Wood--;
+			else Gold--;
+
+			Number--;
+		}
+	}
+	else if(Struct == "Industrial")
+	{
+		while(Number)
+		{
+			if(Disaster == 0)
+			{
+				if(!Steel) Gold--;
+			}
+
+			if(Steel) Steel--;
+			else Gold--;
+
+			if(Concrete) Concrete--;
+			else Gold--;
+
+			Number--;
+		}
+	}
+	else if(Struct == "Commercial")
+	{
+		while(Number)
+		{
+			if(Concrete) Concrete--;
+			else Gold--;
+
+			if(Glass) Glass--;
+			else Gold--;
+
+			Number--;
+		}
+	}
+	else if(Struct == "Government")
+	{
+		while(Number)
+		{
+			if(Disaster == 0)
+			{
+				if(!Steel) Gold--;
+			}
+
+			if(Steel) Steel--;
+			else Gold--;
+
+			if(Glass) Glass--;
+			else Gold--;
+
+			if(Wood) Wood--;
+			else Gold--;
+
+			Number--;
+		}
+	}
+	else if(Struct == "Recreational")
+	{
+		while(Number)
+		{
+			if(Disaster == 0)
+			{
+				if(!Steel) Gold--;
+			}
+
+			if(Steel) Steel--;
+			else Gold--;
+
+			if(Disaster == 0)
+			{
+				if(!Steel) Gold--;
+			}
+
+			if(Steel) Steel--;
+			else Gold--;
+
+			if(Glass) Glass--;
+			else Gold--;
+
+			if(Wood) Wood--;
+			else Gold--;
+
+			Number--;
+		}
+	}
+	else if(Struct == "Educational")
+	{
+		while(Number)
+		{
+			if(Concrete) Concrete--;
+			else Gold--;
+
+			if(Glass) Glass--;
+			else Gold--;
+
+			if(Wood) Wood--;
+			else Gold--;
+
+			Number--;
+		}
+	}
+	else return(0);
+
+	if(Wood < 0|Steel < 0|Concrete < 0|Glass < 0|Gold < 0) return(0);
+	else return(1);
+
+
+}
+
+///////******************************************************************************
+//////   	BUTTON CODE - - -  				- - - 			- - - BUTTON CODE
+///////******************************************************************************
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This will build a structure						Build(Structure)
+function Build(Structure)
+{
+	if(!Structure) var Structure = Main.document.BuildForm.Structure.value;
+
+	if(!Afford(Structure,ActionNs))
+	{
+		if(Player[Turn].Type == "H") alert("You don't have enough resources or gold to build " + ActionNs + " " + Structure + "!");
+		for(; ActionNs; ActionNs--) delete ActionN[ActionNs];
+	}
+
+	while(ActionNs)
+	{
+		var Row = ActionN[ActionNs].Row,
+			Col = ActionN[ActionNs].Col;
+		Subs = ActionN[ActionNs].Row + "X" + ActionN[ActionNs].Col;
+
+		if(Structure == "Bridge")
+		{
+			UpdateTile("Bridge",Row,Col);	// Make sure end is set
+
+			if(Grid[Subs].Image == "RiverH.gif")
+			{
+				Grid[Subs].Structure = Structure;
+				Grid[Subs].alt = Structure;
+				Grid[Subs].Image = "BridgeV.gif";
+
+				if(Row < Rows - 1) UpdateTile("Road",Row + 1,Col);
+				if(Row > 0) UpdateTile("Road",Row - 1,Col);
+			}
+			else
+			{
+				Grid[Subs].Structure = Structure;
+				Grid[Subs].alt = Structure;
+				Grid[Subs].Image = "BridgeH.gif";
+
+				if(Col > 0) UpdateTile("Road",Row,Col - 1);
+				if(Col < Columns - 1) UpdateTile("Road",Row,Col + 1);
+			}
+
+			if(Player[Turn].Concrete) Player[Turn].Concrete--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Concrete) Player[Turn].Concrete--;
+			else Player[Turn].Gold--;
+		}
+		else if(Structure == "Road")
+		{
+			var Attached = 0;
+
+			if(ByRoad(Row,Col) == 0)
+			{
+				alert("You need to attach roads to roads!");
+				ActionNs = 0;
+				break;
+			}
+
+			Grid[Subs].Structure = Structure;
+			Grid[Subs].alt = Structure;
+
+			if(Row < Rows - 1) UpdateTile("Road",Row + 1,Col);
+			if(Row > 0) UpdateTile("Road",Row - 1,Col);
+			if(Col > 0) UpdateTile("Road",Row,Col - 1);
+			if(Col < Columns - 1) UpdateTile("Road",Row,Col + 1);
+
+			UpdateTile("Road",Row,Col);
+			delete ActionN[ActionNs];
+			Empties--;
+
+			if(Player[Turn].Concrete) Player[Turn].Concrete--;
+			else Player[Turn].Gold--;
+		}
+		else if(Structure == "Residential")
+		{
+			Grid[Subs].Owner = Turn;
+			Grid[Subs].Structure = Structure;
+			Grid[Subs].alt = Structure;
+			Grid[Subs].Image = "Res" + Turn + ".gif";
+			delete ActionN[ActionNs];
+			Player[Turn].TechRes = 1;
+			Player[Turn].Score += 100;
+			Empties--;
+
+			if(Player[Turn].Wood) Player[Turn].Wood--;
+			else Player[Turn].Gold--;
+
+			// If the player is computer add it to his queue
+			if(Player[Turn].Type == "C")
+			{
+				Player[Turn].NumRes++;
+
+				var RSubs = Turn + "X" + Player[Turn].NumRes;
+
+				Res[RSubs] = new Object;
+				Res[RSubs].Row = Row;
+				Res[RSubs].Col = Col;
+			}
+		}
+		else if(Structure == "Industrial")
+		{
+			Grid[Subs].Owner = Turn;
+			Grid[Subs].Structure = Structure;
+			Grid[Subs].alt = Structure;
+			Grid[Subs].Image = "Ind" + Turn + ".gif";
+			delete ActionN[ActionNs];
+			Player[Turn].TechInd = 1;
+			Player[Turn].Score += 200;
+			Empties--;
+
+			if(Disaster == 0)
+			{
+				if(!Player[Turn].Steel) Player[Turn].Gold--;
+			}
+
+			if(Player[Turn].Steel) Player[Turn].Steel--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Concrete) Player[Turn].Concrete--;
+			else Player[Turn].Gold--;
+
+			// If the player is computer add it to his queue
+			if(Player[Turn].Type == "C")
+			{
+				Player[Turn].NumInd++;
+
+				var ISubs = Turn + "X" + Player[Turn].NumInd;
+
+				Ind[ISubs] = new Object;
+				Ind[ISubs].Row = Row;
+				Ind[ISubs].Col = Col;
+			}
+		}
+		else if(Structure == "Commercial")
+		{
+			Grid[Subs].Owner = Turn;
+			Grid[Subs].Structure = Structure;
+			Grid[Subs].alt = Structure;
+			Grid[Subs].Image = "Comm" + Turn + ".gif";
+			delete ActionN[ActionNs];
+			Player[Turn].TechCom = 1;
+			Player[Turn].Score += 200;
+			Empties--;
+
+			if(Player[Turn].Concrete) Player[Turn].Concrete--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Glass) Player[Turn].Glass--;
+			else Player[Turn].Gold--;
+
+			// If the player is computer add it to his queue
+			if(Player[Turn].Type == "C")
+			{
+				Player[Turn].NumCom++;
+
+				var CSubs = Turn + "X" + Player[Turn].NumCom;
+
+				Com[CSubs] = new Object;
+				Com[CSubs].Row = Row;
+				Com[CSubs].Col = Col;
+			}
+		}
+		else if(Structure == "Government")
+		{
+			Grid[Subs].Owner = Turn;
+			Grid[Subs].Structure = Structure;
+			Grid[Subs].alt = Structure;
+			Grid[Subs].Image = "Gov" + Turn + ".gif";
+			delete ActionN[ActionNs];
+			Player[Turn].TechGov = 1;
+			Player[Turn].Score += 200;
+			Empties--;
+
+			if(Disaster == 0)
+			{
+				if(!Player[Turn].Steel) Player[Turn].Gold--;
+			}
+
+			if(Player[Turn].Steel) Player[Turn].Steel--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Glass) Player[Turn].Glass--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Wood) Player[Turn].Wood--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Type == "C")
+			{
+				Player[Turn].NumGov++;
+
+				var GSubs = Turn + "X" + Player[Turn].NumGov;
+
+				Gov[GSubs] = new Object;
+				Gov[GSubs].Row = Row;
+				Gov[GSubs].Col = Col;
+			}
+		}
+		else if(Structure == "Recreational")
+		{
+			Grid[Subs].Owner = Turn;
+			Grid[Subs].Structure = Structure;
+			Grid[Subs].alt = Structure;
+			Grid[Subs].Image = "Rec" + Turn + ".gif";
+			delete ActionN[ActionNs];
+			Player[Turn].Score += 300;
+			Empties--;
+
+			if(Disaster == 0)
+			{
+				if(!Player[Turn].Steel) Player[Turn].Gold--;
+			}
+
+			if(Player[Turn].Steel) Player[Turn].Steel--;
+			else Player[Turn].Gold--;
+
+			if(Disaster == 0)
+			{
+				if(!Player[Turn].Steel) Player[Turn].Gold--;
+			}
+
+			if(Player[Turn].Steel) Player[Turn].Steel--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Glass) Player[Turn].Glass--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Wood) Player[Turn].Wood--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Type == "C")
+			{
+				Player[Turn].NumRec++;
+
+				var RSubs = Turn + "X" + Player[Turn].NumRec;
+
+				Rec[RSubs] = new Object;
+				Rec[RSubs].Row = Row;
+				Rec[RSubs].Col = Col;
+			}
+		}
+		else if(Structure == "Educational")
+		{
+			Grid[Subs].Owner = Turn;
+			Grid[Subs].Structure = Structure;
+			Grid[Subs].alt = Structure;
+			Grid[Subs].Image = "Edu" + Turn + ".gif";
+			delete ActionN[ActionNs];
+			Player[Turn].Score += 350;
+			Empties--;
+
+			if(Player[Turn].Concrete) Player[Turn].Concrete--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Glass) Player[Turn].Glass--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Wood) Player[Turn].Wood--;
+			else Player[Turn].Gold--;
+
+			if(Player[Turn].Type == "C")
+			{
+				Player[Turn].NumEdu++;
+
+				var ESubs = Turn + "X" + Player[Turn].NumEdu;
+
+				Edu[ESubs] = new Object;
+				Edu[ESubs].Row = Row;
+				Edu[ESubs].Col = Col;
+			}
+		}
+		else
+		{
+			alert("You don't have enough resources or gold to build a " + Structure + " structure!");
+			ActionNs = 1;
+		}
+
+		ActionNs--;
+	}
+
+	for(; ActionNs; ActionNs--) delete ActionN[ActionNs];
+
+	Draw();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// This function will handle a user exiting				Exit()
+function Exit()
+{
+	if(confirm("Are you sure you want to exit?")) parent.window.close();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// This will show the instructions						Instruct()
+function Instruct()
+{
+	var InstructWin = window.open("Instruct.html",	// The page to open
+		"Instruct",	// The Page Name
+		"directories=0,location=0,scrollbars=1,menubar=0,status=0,toolbar=0,resizable=1,titlebar=1,hotkeys=0,height=544,width=500,fullscreen=0");
+	var InstructDoc = InstructWin.document;	// Setup the Document
+
+	var Output = "<html>";
+
+	InstructWin.focus();
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+// This will updates a road, bridge, or river tile		UpdateTile(Structure,Row,Col) = # of junctions.
+function UpdateTile(Structure,Row,Col)
+{
+	Dir = new Object;
+	Subs = Row + "X" + Col;
+	var Dirs;	// This will hold the number of directions
+
+	///////////////////////////////////////////////////////////////
+	// Dir: 0 = East 1 = South 2 = West 3 = North ++++++++++++++
+	///////////////////////////////////////////////////////////////
+	if(Grid[Subs].Structure != Structure) return(0);
+
+	if(Col != Columns - 1)
+	{
+		if(Grid[Row + "X" + eval(Col + 1)].Structure == Structure) Dir[0] = 1;
+		else if((Structure == "Road"|Structure == "River")&Grid[Row + "X" + eval(Col + 1)].Structure == "Bridge") Dir[0] = 1;
+		else Dir[0] = 0;
+	}
+	else Dir[0] = 1;
+
+	if(Row != Rows - 1)
+	{
+		if(Grid[eval(Row + 1) + "X" + Col].Structure == Structure) Dir[1] = 1;
+		else if((Structure == "Road"|Structure == "River")&Grid[eval(Row + 1) + "X" + Col].Structure == "Bridge") Dir[1] = 1;
+		else Dir[1] = 0;
+	}
+	else Dir[1] = 1;
+
+	if(Col != 0)
+	{
+		if(Grid[Row + "X" + eval(Col - 1)].Structure == Structure) Dir[2] = 1;
+		else if((Structure == "Road"|Structure == "River")&Grid[Row + "X" + eval(Col - 1)].Structure == "Bridge") Dir[2] = 1;
+		else Dir[2] = 0;
+	}
+	else Dir[2] = 1;
+
+	if(Row != 0)
+	{
+		if(Grid[eval(Row - 1) + "X" + Col].Structure == Structure) Dir[3] = 1;
+		else if((Structure == "Road"|Structure == "River")&Grid[eval(Row - 1) + "X" + Col].Structure == "Bridge") Dir[3] = 1;
+		else Dir[3] = 0;
+	}
+	else Dir[3] = 1;
+
+	// Update Roads and rivers
+	if(Structure == "Road"|Structure == "River")
+	{
+		if(Dir[0]&Dir[1]&Dir[2]&Dir[3]) Grid[Subs].Image = Structure + "C.gif";
+		else if(Dir[0]&Dir[1]&Dir[2]) Grid[Subs].Image = Structure + "HB.gif";
+		else if(Dir[1]&Dir[2]&Dir[3]) Grid[Subs].Image = Structure + "VL.gif";
+		else if(Dir[2]&Dir[3]&Dir[0]) Grid[Subs].Image = Structure + "HT.gif";
+		else if(Dir[3]&Dir[0]&Dir[1]) Grid[Subs].Image = Structure + "VR.gif";
+		else if(Dir[0]&Dir[1]) Grid[Subs].Image = Structure + "SE.gif";
+		else if(Dir[1]&Dir[2]) Grid[Subs].Image = Structure + "SW.gif";
+		else if(Dir[2]&Dir[3]) Grid[Subs].Image = Structure + "NW.gif";
+		else if(Dir[3]&Dir[0]) Grid[Subs].Image = Structure + "NE.gif";
+		else if(Dir[0]|Dir[2]) Grid[Subs].Image = Structure + "H.gif";
+		else if(Dir[1]|Dir[3]) Grid[Subs].Image = Structure + "V.gif";
+	}
+
+	Dirs = Dir[0] + Dir[1] + Dir[2] + Dir[3];
+
+	if(Structure == "Bridge")
+	{
+		if(Grid[Subs].Image == "RiverH.gif"|Grid[Subs].Image == "BridgeV.gif")
+		{
+			if(Dir[1] + Dir[3] == 1) Grid[Subs].End = 1;
+		}
+		else if(Dir[0] + Dir[2] == 1) Grid[Subs].End = 1;
+	}
+	else if(Dirs == 1) Grid[Subs].End = 1;
+	else Grid[Subs].End = 0;
+
+	return(Dirs);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This will demolish a structure					DemoStruct()
+function DemoStruct()
+{
+	while(ActionCs)
+	{
+		var Row = ActionC[ActionCs].Row,
+			Col = ActionC[ActionCs].Col;
+		Subs = ActionC[ActionCs].Row + "X" + ActionC[ActionCs].Col;
+
+		if(Grid[Subs].Structure == "Residential") Player[Turn].Score -= 200;
+		else if(Grid[Subs].Structure == "Industrial") Player[Turn].Score -= 400;
+		else if(Grid[Subs].Structure == "Commercial") Player[Turn].Score -= 400;
+		else if(Grid[Subs].Structure == "Government") Player[Turn].Score -= 400;
+		else if(Grid[Subs].Structure == "Recreational") Player[Turn].Score -= 600;
+		else if(Grid[Subs].Structure == "Educational") Player[Turn].Score -= 700;
+
+		DQ(Row,Col,1);
+		delete ActionC[ActionCs];
+		ActionCs--;
+	}
+
+	Draw();
+
+}
+
+///////******************************************************************************
+//////   	Sell CODE - - -  				- - - 			- - - Sell CODE
+///////******************************************************************************
+
+/////////////////////////////////////////////////////////////////////////////////////
+//	This will draw the sell screen						SellScreen()
+function SellScreen()
+{
+	if(PlayerNumber == 2) parent.SellFor();
+	else
+	{
+		Output = "<html><head></head>";
+		Output += "<body bgcolor=#FFFFFF text=#000000>";
+		Output += "<center><form name='SellForm'><font size='3' face='Times New Roman'>";
+		Output += "<h1>Sell</h1></font><font size='3' face='Times New Roman'><p>Who will you sell to? ";
+		Output += "<select name=Tradee size=1 onchange='parent.SellFor()'>";
+
+		for(var PlayerNum=1; PlayerNum<PlayerNumber + 1; PlayerNum++)
+		{
+			if(PlayerNum != Turn)
+			Output += "<option value=" + PlayerNum + ">" + Player[PlayerNum].Name + "</option>";
+		}
+
+		Output += "</select><p><input type='button' value='Sell' onclick='parent.SellFor()'>";
+		Output += "</p></font></form></center></body></html>";
+
+		for(; ActionNs; ActionNs--) delete ActionN[ActionNs];
+		for(; ActionOs; ActionOs--) delete ActionO[ActionOs];
+
+		Main.document.open();
+		Main.document.write(Output);
+		Main.document.close();
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This will set the resource and point options			SellFor()
+function SellFor()
+{
+	var Count;
+
+	if(PlayerNumber != 2) Tradee = Main.document.SellForm.Tradee.value;
+	else
+	{
+		if(Turn == 1) Tradee = 2;
+		else Tradee = 1;
+	}
+
+	Output = "<html><head></head>";
+	Output += "<body bgcolor=#FFFFFF text=#000000>";
+	Output += "<center><font size='5' face='Times New Roman'><h1>Sell</h1></font>";
+	Output += "<font size='3' face='Times New Roman'><p>What will you sell for? ";
+	Output += "<form type=button name=SellForm>";
+
+	if(Player[Tradee].Score>0)
+	{
+		Output += "<b>Points<select name=Points>";
+
+		for(var Count=0; Count <= Player[Tradee].Score; Count += 50)
+		{
+			Output += "<option value=" + Count + ">" + Count + "</option>";
+		}
+
+		Output += "</select>";
+	}
+
+
+	if(Player[Tradee].Gold>0)
+	{
+		Output += "<br><img src='Gold.gif' alt='Gold'><select name=Gold>";
+
+		for(var Count=0; Count <= Player[Tradee].Gold; Count++)
+		{
+			 Output += "<option value=" + Count + ">" + Count + "</option>";
+		}
+
+		Output += "</select>";
+	}
+
+	if(Player[Tradee].Glass>0)
+	{
+		Output += "<br><img src='Glass.gif' alt='Glass'><select name=Glass>";
+
+		for(var Count=0; Count <= Player[Tradee].Glass; Count++)
+		{
+			 Output += "<option value=" + Count + ">" + Count + "</option>";
+		}
+
+		Output += "</select>";
+	}
+
+	if(Player[Tradee].Concrete>0)
+	{
+		Output += "<br><img src='Concrete.gif' alt='Concrete'><select name=Concrete>";
+
+		for(var Count=0; Count <= Player[Tradee].Concrete; Count++)
+		{
+			 Output += "<option value=" + Count + ">" + Count + "</option>";
+		}
+
+		Output += "</select>";
+	}
+
+	if(Player[Tradee].Steel>0)
+	{
+		Output += "<br><img src='Steel.gif' alt='Steel'><select name=Steel>";
+
+		for(var Count=0; Count <= Player[Tradee].Steel; Count++)
+		{
+			 Output += "<option value=" + Count + ">" + Count + "</option>";
+		}
+
+		Output += "</select>";
+	}
+
+	if(Player[Tradee].Wood>0)
+	{
+		Output += "</select><br><img src='Wood.gif' alt='Wood'><select name=Wood>";
+
+		for(var Count=0; Count <= Player[Tradee].Wood; Count++)
+		{
+			 Output += "<option value=" + Count + ">" + Count + "</option>";
+		}
+
+		Output += "</select>";
+	}
+
+	Output += "</b><br><input type=button value=Sell onclick='parent.AskSell()'></center></form></font></body></html>";
+
+	Main.document.open();
+	Main.document.write(Output);
+	Main.document.close();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+//	This will ask the other player if they want to buy		AskSell()
+function AskSell()
+{
+	if(Player[Tradee].Type == "C")
+	{
+		alert(Player[Tradee].Name + " has decided to turn down your offer.");
+
+		for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+		for(; ActionOs; ActionOs--) delete ActionO[ActionOs];
+		for(; ActionNs; ActionNs--) delete ActionN[ActionNs];
+
+		Draw();
+	}
+	else
+	{
+		if(Player[Tradee].Wood>0) Wood = Main.document.SellForm.Wood.value;
+		else Wood = 0;
+
+		if(Player[Tradee].Steel>0) Steel = Main.document.SellForm.Steel.value;
+		else Steel = 0;
+
+		if(Player[Tradee].Concrete>0) Concrete = Main.document.SellForm.Concrete.value;
+		else Concrete = 0;
+
+		if(Player[Tradee].Glass>0) Glass = Main.document.SellForm.Glass.value;
+		else Glass = 0;
+
+		if(Player[Tradee].Gold>0) Gold = Main.document.SellForm.Gold.value;
+		else Gold = 0;
+
+		if(Player[Tradee].Score>0) Points = Main.document.SellForm.Points.value;
+		else Points = 0;
+
+		Output = "<html><head></head>";
+		Output += "<body bgcolor=#FFFFFF text=#000000><center><font size='5' face='Times New Roman'>";
+		Output += Player[Tradee].Name + ", would you like to buy the below for the following? </font>";
+		Output += "<input type=button value=Yes onclick='parent.Sell(1)'><input type=button value=No onclick='parent.Sell(0)'>"
+		Output += "</select><br><font size='3' face='Times New Roman'>";
+
+		if(Wood>0) Output += "<img src='Wood.gif' alt='Wood'>: <b>" + Wood + " </b>";
+		if(Steel>0) Output += "<img src='Steel.gif alt='Steel'>: <b>" + Steel + " </b>";
+		if(Concrete>0) Output += "<img src='Concrete.gif' alt='Concrete'>: <b>" + Concrete + " </b>";
+		if(Glass>0) Output += "<img src='Glass.gif' alt='Glass'>: <b>" + Glass + " </b>";
+		if(Gold>0) Output += "<img src='Gold.gif' alt='Gold'>: <b>" + Gold + " </b>";
+		if(Points>0) Output += "Points: <b>" + Points + " </b>";
+
+		Output += "</font><br>";
+
+		// Loop Maximized for speed!
+		for(var Count=0; Count<Rows; Count++)
+		{
+			for(var Col=0; Col<Columns; Col++)
+			{
+				var Subs = Count + "X" + Col,
+					ImgName = "ImgGrid" + Subs;
+
+				if(Grid[Subs].ImageDisplay != "ActionC.gif") Grid[Subs].ImageDisplay = Grid[Subs].Image;
+				Output += "<img src=" + Grid[Subs].ImageDisplay + " width=54 height=54 name=" + ImgName + " alt='" + Grid[Subs].alt + "'>";
+			}
+			Output += "<br>";
+		}
+
+		Output += "</td></table></center></body></html>";
+
+		Main.document.open();
+		Main.document.write(Output);
+		Main.document.close();
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+//	This will execute a sale						Sell()
+function Sell(Sell)
+{
+	if(Sell)
+	{
+		Player[Turn].Gold = eval(Gold) + eval(Player[Turn].Gold);
+		Player[Turn].Wood = eval(Wood) + eval(Player[Turn].Wood);
+		Player[Turn].Steel = eval(Steel) + eval(Player[Turn].Steel);
+		Player[Turn].Concrete = eval(Concrete) + eval(Player[Turn].Concrete);
+		Player[Turn].Glass = eval(Glass) + eval(Player[Turn].Glass);
+		Player[Turn].Score = eval(Points) + eval(Player[Turn].Score);
+
+		Player[Tradee].Gold = eval(Player[Tradee].Gold) - eval(Gold);
+		Player[Tradee].Wood = eval(Player[Tradee].Wood) - eval(Wood);
+		Player[Tradee].Steel = eval(Player[Tradee].Steel) - eval(Steel);
+		Player[Tradee].Concrete = eval(Player[Tradee].Concrete) - eval(Concrete);
+		Player[Tradee].Glass = eval(Player[Tradee].Glass) - eval(Glass);
+		Player[Tradee].Score = eval(Player[Tradee].Score) - eval(Points);
+
+		while(ActionCs)
+		{
+			var Row = ActionC[ActionCs].Row,
+				Col = ActionC[ActionCs].Col;
+			Subs = ActionC[ActionCs].Row + "X" + ActionC[ActionCs].Col;
+
+			Grid[Subs].Owner = Tradee;
+
+			if(Grid[Subs].Structure == "Residential") Grid[Subs].Image = "Res" + Tradee + ".gif";
+			else if(Grid[Subs].Structure == "Industrial") Grid[Subs].Image = "Ind" + Tradee + ".gif";
+			else if(Grid[Subs].Structure == "Commercial") Grid[Subs].Image = "Comm" + Tradee + ".gif";
+			else if(Grid[Subs].Structure == "Government") Grid[Subs].Image = "Gov" + Tradee + ".gif";
+			else if(Grid[Subs].Structure == "Recreational") Grid[Subs].Image = "Rec" + Tradee + ".gif";
+			else if(Grid[Subs].Structure == "Educational") Grid[Subs].Image = "Edu" + Tradee + ".gif";
+
+			delete ActionC[ActionCs];
+			ActionCs--;
+		}
+	}
+	else for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+
+	Draw();
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This will trade a building						TradeScreen()
+function TradeScreen()
+{
+	Tradee = 99;
+
+	for(; ActionNs; ActionNs--) delete ActionN[ActionNs];
+
+	if(ActionOs == 0)
+	{
+		alert("You need to choose at least one structure owned by another contractor.");
+		return(0);
+	}
+
+	for(var Count = 1; Count<ActionOs + 1; Count++)
+	{
+		var Subs = ActionO[Count].Row + "X" + ActionO[Count].Col;
+
+		if(Tradee == 99) Tradee = Grid[Subs].Owner;
+		else if(Tradee != Grid[Subs].Owner)
+		{
+			alert("You can only trade with one person at a time!");
+			for(; ActionOs; ActionOs--) delete ActionO[ActionOs];
+			for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+			Draw();
+			return(0);
+		}
+	}
+
+	if(Player[Tradee].Type == "C")
+	{
+		alert(Player[Tradee].Name + " has decided to turn down your offer.");
+
+		for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+		for(; ActionOs; ActionOs--) delete ActionO[ActionOs];
+
+		Draw();
+	}
+	else
+	{
+		Output = "<html><head></head>";
+		Output += "<body bgcolor=#FFFFFF text=#000000><center><form name='Trade'><font size='5' face='Times New Roman'>";
+		Output += Player[Tradee].Name + ", would you like to trade the below? </font>";
+		Output += "<input type=button value=Yes onclick='parent.Trade(1)'><input type=button value=No onclick='parent.Trade(0)'>"
+		Output += "</select><br>";
+
+		// Loop Maximized for speed!
+		for(var Count=0; Count<Rows; Count++)
+		{
+			for(var Col=0; Col<Columns; Col++)
+			{
+				var Subs = Count + "X" + Col,
+					ImgName = "ImgGrid" + Subs;
+
+				if(Grid[Subs].ImageDisplay != "ActionC.gif"&Grid[Subs].ImageDisplay != "ActionO.gif") Grid[Subs].ImageDisplay = Grid[Subs].Image;
+				Output += "<img src=" + Grid[Subs].ImageDisplay + " width=54 height=54 name=" + ImgName + " alt='" + Grid[Subs].alt + "'>";
+			}
+			Output += "<br>";
+		}
+
+		Output += "</td></table></form></center></body></html>";
+
+		Main.document.open();
+		Main.document.write(Output);
+		Main.document.close();
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This will trade building							Trade()
+function Trade(Trade)
+{
+	if(Trade)
+	{
+		while(ActionCs)
+		{
+			var Row = ActionC[ActionCs].Row,
+				Col = ActionC[ActionCs].Col;
+			Subs = ActionC[ActionCs].Row + "X" + ActionC[ActionCs].Col;
+
+			Grid[Subs].Owner = Tradee;
+
+			if(Grid[Subs].Structure == "Residential") Grid[Subs].Image = "Res" + Tradee + ".gif";
+			else if(Grid[Subs].Structure == "Industrial") Grid[Subs].Image = "Ind" + Tradee + ".gif";
+			else if(Grid[Subs].Structure == "Commercial") Grid[Subs].Image = "Comm" + Tradee + ".gif";
+			else if(Grid[Subs].Structure == "Government") Grid[Subs].Image = "Gov" + Tradee + ".gif";
+			else if(Grid[Subs].Structure == "Recreational") Grid[Subs].Image = "Rec" + Tradee + ".gif";
+			else if(Grid[Subs].Structure == "Educational") Grid[Subs].Image = "Edu" + Tradee + ".gif";
+
+			delete ActionC[ActionCs];
+			ActionCs--;
+		}
+
+		while(ActionOs)
+		{
+			var Row = ActionO[ActionOs].Row,
+				Col = ActionO[ActionOs].Col;
+			Subs = ActionO[ActionOs].Row + "X" + ActionO[ActionOs].Col;
+
+			Grid[Subs].Owner = Turn;
+
+			if(Grid[Subs].Structure == "Residential") Grid[Subs].Image = "Res" + Turn + ".gif";
+			else if(Grid[Subs].Structure == "Industrial") Grid[Subs].Image = "Ind" + Turn + ".gif";
+			else if(Grid[Subs].Structure == "Commercial") Grid[Subs].Image = "Comm" + Turn + ".gif";
+			else if(Grid[Subs].Structure == "Government") Grid[Subs].Image = "Gov" + Turn + ".gif";
+			else if(Grid[Subs].Structure == "Recreational") Grid[Subs].Image = "Rec" + Turn + ".gif";
+			else if(Grid[Subs].Structure == "Educational") Grid[Subs].Image = "Edu" + Turn + ".gif";
+
+			delete ActionO[ActionOs];
+			ActionOs--;
+		}
+	}
+	else	// If you don't trade clean-up
+	{
+		for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+		for(; ActionOs; ActionOs--) delete ActionO[ActionOs];
+	}
+
+
+	for(; ActionNs; ActionNs--) delete ActionN[ActionNs];
+
+	Draw();
+}
+
+///////******************************************************************************
+//////   	Contracts CODE - - -  				- - - 			- - - Contracts CODE
+///////******************************************************************************
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This will build Contract[]							BuildContract()
+function BuildContract()
+{
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Apartments";
+	Contract[Contracts].Description = "Allen Peterson wants to make money by renting apartments.";
+	Contract[Contracts].Req = "Two adjacent residential structures.";
+	Contract[Contracts].Points = 240;
+	Contract[Contracts].Structure = "Residential";
+	Contract[Contracts].Number = 2;
+	Contract[Contracts].AdjE = 1;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Arcade";
+	Contract[Contracts].Description = "The Funcade chain wants to expand in your city. They want to have an arcade within walking distance of homes so that children can get there without their parents.";
+	Contract[Contracts].Req = "One recreational structure adjacent to at least one residential structure.";
+	Contract[Contracts].Points = 160;
+	Contract[Contracts].Structure = "Recreational";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 1;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "City Hall";
+	Contract[Contracts].Description = "The city needs a city hall.";
+	Contract[Contracts].Req = "One government structure.";
+	Contract[Contracts].Points = 120;
+	Contract[Contracts].Structure = "Government";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Condos";
+	Contract[Contracts].Description = "PineWood Community Housing is looking for a new residential area that they can convert into Condominiums.";
+	Contract[Contracts].Req = "Six adjacent residential structures.";
+	Contract[Contracts].Points = 900;
+	Contract[Contracts].Structure = "Residential";
+	Contract[Contracts].Number = 6;
+	Contract[Contracts].AdjE = 1;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Condos";
+	Contract[Contracts].Description = "Century Condominium has just been formed and needs residential structures. ";
+	Contract[Contracts].Req = "Six adjacent residential structures.";
+	Contract[Contracts].Points = 900;
+	Contract[Contracts].Structure = "Residential";
+	Contract[Contracts].Number = 6;
+	Contract[Contracts].AdjE = 1;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "College Campus";
+	Contract[Contracts].Description = "The state college wants to expand in your area.";
+	Contract[Contracts].Req = "Two adjacent educational structures. At least one of them must be adjacent to a residence.";
+	Contract[Contracts].Points = 290;
+	Contract[Contracts].Structure = "Educational";
+	Contract[Contracts].Number = 2;
+	Contract[Contracts].AdjE = 1;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 1;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Home";
+	Contract[Contracts].Description = "The Smith family needs a home.";
+	Contract[Contracts].Req = "One residential structure.";
+	Contract[Contracts].Points = 120;
+	Contract[Contracts].Structure = "Residential";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Home";
+	Contract[Contracts].Description = "The Monroe family needs a home.";
+	Contract[Contracts].Req = "One residential structure.";
+	Contract[Contracts].Points = 120;
+	Contract[Contracts].Structure = "Residential";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Home";
+	Contract[Contracts].Description = "The Alexanders need a home.";
+	Contract[Contracts].Req = "One residential structure.";
+	Contract[Contracts].Points = 120;
+	Contract[Contracts].Structure = "Residential";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Hydro-electric Power Plant";
+	Contract[Contracts].Description = "A local power company needs a power plant.";
+	Contract[Contracts].Req = "One industrial structure adjacent to a river.";
+	Contract[Contracts].Points = 160;
+	Contract[Contracts].Structure = "Industrial";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Library";
+	Contract[Contracts].Description = "The city needs a library.";
+	Contract[Contracts].Req = "One educational structure.";
+	Contract[Contracts].Points = 120;
+	Contract[Contracts].Structure = "Educational";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Paper Manufacturing Plant";
+	Contract[Contracts].Description = "Papyrus Industries wants to build a paper manufacturing plant. The city will not let them own property near residences because of the smell.";
+	Contract[Contracts].Req = "One industrial structure that is not adjacent to a residential structure.";
+	Contract[Contracts].Points = 120;
+	Contract[Contracts].Structure = "Industrial";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 2;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Police Station";
+	Contract[Contracts].Description = "The city needs a police station.";
+	Contract[Contracts].Req = "One government structure.";
+	Contract[Contracts].Points = 120;
+	Contract[Contracts].Structure = "Government";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Post Office";
+	Contract[Contracts].Description = "The national government has decided to build a new post office in your city.";
+	Contract[Contracts].Req = "One government structure.";
+	Contract[Contracts].Points = 120;
+	Contract[Contracts].Structure = "Government";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Playground";
+	Contract[Contracts].Description = "To improve the city's public image they want to build a playground within walking distance of the local homes.";
+	Contract[Contracts].Req = "One recreational structure adjacent to at least one residence.";
+	Contract[Contracts].Points = 160;
+	Contract[Contracts].Structure = "Recreational";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 1;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Recreational center";
+	Contract[Contracts].Description = "The Tapir foundation wants to buy a recreational center that it can use as an edutainment facility to teach about endangered species.";
+	Contract[Contracts].Req = "One recreational structure.";
+	Contract[Contracts].Points = 120;
+	Contract[Contracts].Structure = "Recreational";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Restaurant Chain";
+	Contract[Contracts].Description = "Tummy Friends is looking to expand in your community.";
+	Contract[Contracts].Req = "One commercial structure adjacent to at least one residential structure.";
+	Contract[Contracts].Points = 160;
+	Contract[Contracts].Structure = "Commercial";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 1;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Saw Mill";
+	Contract[Contracts].Description = "Loggerama industries is looking for a saw mill that they can reach by boat.";
+	Contract[Contracts].Req = "One industrial structure adjacent to a river.";
+	Contract[Contracts].Points = 160;
+	Contract[Contracts].Structure = "Industrial";
+	Contract[Contracts].Number = 1;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 1;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "School District";
+	Contract[Contracts].Description = "The state needs a new school district. This will require three educational facilities.";
+	Contract[Contracts].Req = "Three educational structures.";
+	Contract[Contracts].Points = 500;
+	Contract[Contracts].Structure = "Educational";
+	Contract[Contracts].Number = 3;
+	Contract[Contracts].AdjE = 0;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	Contracts++;
+	Contract[Contracts] = new Object;
+	Contract[Contracts].Name = "Shopping Plaza";
+	Contract[Contracts].Description = "The Red Baron conglomerate wants to expand and is willing to pay top dollar for a good shopping plaza.";
+	Contract[Contracts].Req = "Four adjacent commercial structures.";
+	Contract[Contracts].Points = 750;
+	Contract[Contracts].Structure = "Commercial";
+	Contract[Contracts].Number = 4;
+	Contract[Contracts].AdjE = 1;
+	Contract[Contracts].AdjRiver = 0;
+	Contract[Contracts].AdjRes = 0;
+
+	// Shuffle
+	for(Count=1; Count <= Contracts; Count++)
+	{
+		ContractCopy = new Object;
+		var Count2 = Math.floor(Math.random() * Count - 1) + 2;
+
+		ContractCopy = Contract[Count];
+		Contract[Count] = Contract[Count2];
+		Contract[Count2] = ContractCopy;
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This will write the Contract's page				ContractsPage()
+function ContractsPage()
+{
+	Output = "<html><head></head>";
+	Output += "<body bgcolor=#FFFFFF text=#000000><center><form name='Contracts'>";
+	Output += "<font size='5' face='Times New Roman'><h1>Contracts</h1></font><table border=1>";
+
+	var Count = 1;
+
+	while(Count<4)
+	{
+		Output += "<td width=33% valign=top><font size='3' face='Times New Roman'><h2 align=center>" + Contract[Count].Name + "</h2><p>" + Contract[Count].Description;
+		Output += "</p><p>" + Contract[Count].Req + "</p>";
+		Output += "<center><p><input type=button value=Bid onclick='parent.Bid(" + Count + ")'></center></font></td>";
+		Count++;
+	}
+
+	Output += "</table><p><input type=button value=Return onclick='parent.Bid(0)'></form></center></body></html>";
+
+	Main.document.open();
+	Main.document.write(Output);
+	Main.document.close();
+
+	for(; ActionNs; ActionNs--) delete ActionN[ActionNs];
+	for(; ActionOs; ActionOs--) delete ActionO[ActionOs];
+}
+
+//Contracts = new Object;	// This is an array of the the contracts, The first three are
+						// the currently available contracts.
+						// Contract[Number].Name = The contract's name
+						// Contract[Number].Description = The description
+						// Contract[Number].Req = The requirement description
+						// Contract[Number].Points = The contract's point value
+						// Contract[Number].Structure = The structure required
+						// Contract[Number].Number = The number of structures needed
+						// Contract[Number].AdjRiver = Flag of wether it should be
+						// adjacent to a river
+						// Contract[Number].AdjRes =
+						// 	0 = It doesn't have to be near a residence
+						// 	1 = It must be adjacent to a residence
+						// 	2 = It must not be adjacent to a residence
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This will bid for a contract						Bid()
+function Bid(Number)
+{
+	var Count;	// Use for looping
+
+	if(Number == 0)
+	{
+		for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+
+		Draw();
+		return(0);
+	}
+
+	if(ActionCs == 0)
+	{
+		for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+
+		if(Player[Turn].Type == "H") alert("You need to choose buildings you own to make a bid!");
+		Draw();
+		return(0);
+	}
+	else if(ActionCs != Contract[Number].Number)
+	{
+		for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+
+		if(Player[Turn].Type == "H")
+		{
+			if(Contract[Number].Number>1) alert("You need " + Contract[Number].Number + " buildings for this contract.");
+			else alert("You need 1 building for this contract.");
+		}
+
+		Draw();
+		return(0);
+	}
+
+	for(Count = ActionCs; Count; Count--)
+	{
+		if(Contract[Number].Structure != Grid[ActionC[Count].Row + "X" + ActionC[Count].Col].Structure)
+		{
+			for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+
+			if(Player[Turn].Type == "H")
+			{
+				if(Contract[Number].Number != 1) alert("You need " + Contract[Number].Structure + " buildings to fulfill this contract.");
+				else alert("You need one " + Contract[Number].Structure + " building to fulfill this contract.");
+			}
+
+			Draw();
+			return(0);
+		}
+	}
+
+	if(Contract[Number].AdjRiver)
+	{
+		for(Count = ActionCs; Count; Count--)
+		{
+			if(!Adj("River",ActionC[Count].Row,ActionC[Count].Col))
+			{
+				for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+
+				if(Player[Turn].Type == "H")
+				{
+					if(Contract[Number].Number != 1) alert("You need the buildings to be adjacent to a river to fulfill this contract.");
+					else alert("You need the building to be adjacent to a river to fulfill this contract.");
+				}
+
+				Draw();
+				return(0);
+			}
+		}
+	}
+
+	// If AdjRes = 1 we need to make sure at least one structure is adjacent to a Residence
+	if(Contract[Number].AdjRes == 1)
+	{
+		var NotAdj = 0;	// Keep a counter of how many are adjacent to a residence
+
+		for(Count = ActionCs; Count; Count--)
+		{
+			if(!Adj("Residential",ActionC[Count].Row,ActionC[Count].Col)) NotAdj++;
+		}
+
+		if(NotAdj == ActionCs)
+		{
+			for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+
+			if(Player[Turn].Type == "H")
+			{
+				if(Contract[Number].Number != 1) alert("You need the buildings to be adjacent to a residence to fulfill this contract.");
+				else alert("You need the building to be adjacent to a residence to fulfill this contract.");
+			}
+
+			Draw();
+			return(0);
+		}
+	}
+	else if(Contract[Number].AdjRes == 2)
+	{
+		for(Count = ActionCs; Count; Count--)
+		{
+			if(Adj("Residential",ActionC[Count].Row,ActionC[Count].Col))
+			{
+				for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+
+				if(Player[Turn].Type == "H")
+				{
+					if(Contract[Number].Number != 1) alert("You need the buildings to not be adjacent to a residence to fulfill this contract.");
+					else alert("You need the building to not be adjacent to a residence to fulfill this contract.");
+				}
+
+				Draw();
+				return(0);
+			}
+		}
+	}
+
+	if(Contract[Number].AdjE == 1)
+	{
+		Count = Contract[Number].Number;
+
+		while(Count)
+		{
+			if(AdjImage("ActionC.gif",ActionC[Count].Row,ActionC[Count].Col) == 0)
+			{
+				for(; ActionCs; ActionCs--) delete ActionC[ActionCs];
+
+				if(Player[Turn].Type == "H") alert("You need the buildings to be adjacent to each other.");
+
+				Draw();
+				return(0);
+			}
+
+			Count--;
+		}
+	}
+
+	Player[Turn].Score += Contract[Number].Points;
+
+	while(ActionCs)
+	{
+		Subs = ActionC[ActionCs].Row + "X" + ActionC[ActionCs].Col;
+		DQ(ActionC[ActionCs].Row,ActionC[ActionCs].Col);
+		Grid[Subs].Owner = "NP";
+		Grid[Subs].alt = Contract[Number].Name;
+
+		if(Grid[Subs].Structure == "Residential") Grid[Subs].Image = "ResN.gif";
+		else if(Grid[Subs].Structure == "Industrial") Grid[Subs].Image = "IndN.gif";
+		else if(Grid[Subs].Structure == "Commercial") Grid[Subs].Image = "CommN.gif";
+		else if(Grid[Subs].Structure == "Government") Grid[Subs].Image = "GovN.gif";
+		else if(Grid[Subs].Structure == "Recreational") Grid[Subs].Image = "RecN.gif";
+		else if(Grid[Subs].Structure == "Educational") Grid[Subs].Image = "EduN.gif";
+
+		delete ActionC[ActionCs];
+		ActionCs--;
+	}
+
+	Contract[Number] = Contract[Contracts];
+	delete Contract[Contracts];
+	Contracts--;
+
+	// If we run out re-build!
+	if(Contracts < 3) BuildContract();
+
+	Draw();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This will cause a Disaster, naturally!			NaturalDisaster()
+function NaturalDisaster()
+{
+	var Destroyed = 0,
+		Demolish;	// Boolean of wether damage was done
+
+	Disaster = Math.floor(Math.random() * 11);
+
+	Output = "<html><head></head>";
+	Output += "<body bgcolor=#FFFFFF text=#000000><center><form name='Disaster'><font size='5' face='Times New Roman'>";
+
+	if(Disaster == 0)
+	{
+		Output += "<img src='avalanche.jpg'><p>";
+	}
+	else if(Disaster == 1)
+	{
+		Output += "<img src='blizzard.jpg'><p>";
+	}
+	else if(Disaster == 2)
+	{
+		Output += "<img src='fire.jpg'>";
+
+		// Loop through from a random point and destroy the first building found
+		for(Row=Math.floor(Math.random() * Rows); Row<Rows&Destroyed != 1; Row++)
+		{
+			for(Col=Math.floor(Math.random() * Columns); Col<Columns&!Destroyed; Col++)
+			{
+				if(Grid[Row + "X" + Col].Owner != "None")
+				{
+					Destroyed = 1;
+					break;
+				}
+			}
+
+			// If we don't break the Column could be wrong!
+			if(Destroyed == 1) break;
+		}
+
+		// If the first loop found nothing loop through the rest
+		if(Destroyed != 1) Row=0;
+
+		while(Row<Rows&Destroyed != 1)
+		{
+			for(Col=0; Col<Columns&!Destroyed; Col++)
+			{
+				if(Grid[Row + "X" + Col].Owner != "None")
+				{
+					Destroyed = 1;
+					break;
+				}
+			}
+
+			// If we don't break the Column could be wrong!
+			if(Destroyed == 1) break;
+
+			Row++
+		}
+
+		// If Destroyed has a value we have found a building to burn
+		if(Destroyed)
+		{
+			var SaveRow = Row,
+				SaveCol = Col;
+
+			// Destroy the first building and a random amount of nearby buildings
+			Demolish = Math.floor(Math.random() * 3) + 1;
+			Destroyed = Demolish;
+			Subs = Row + "X" + Col;
+
+			DQ(Row,Col,1);
+			Demolish--;
+
+			if(Demolish&Row>0)
+			{
+				if(Demolish&Col>0)
+				{
+					Subs = eval(Row - 1) + "X" + eval(Col - 1);
+
+					if(Grid[Subs].Owner != "None")
+					{
+						DQ(Row - 1,Col - 1,1);
+						Demolish--;
+					}
+				}
+
+				if(Demolish&Col<Columns - 1)
+				{
+					Subs = eval(Row - 1) + "X" + eval(Col + 1);
+
+					if(Grid[Subs].Owner != "None")
+					{
+						DQ(Row - 1,Col + 1,1);
+						Demolish--;
+					}
+				}
+			}
+
+			if(Demolish&Row<Rows - 1)
+			{
+				Subs = eval(Row + 1) + "X" + Col;
+
+				if(Grid[Subs].Owner != "None")
+				{
+					DQ(Row + 1,Col,1);
+					Demolish--;
+				}
+
+				if(Demolish&Col>0)
+				{
+					Subs = eval(Row + 1) + "X" + eval(Col - 1);
+
+					if(Grid[Subs].Owner != "None")
+					{
+						DQ(Row + 1,Col - 1,1);
+						Demolish--;
+					}
+				}
+
+				if(Demolish&Col<Columns - 1)
+				{
+					Subs = eval(Row + 1) + "X" + eval(Col + 1);
+
+					if(Grid[Subs].Owner != "None")
+					{
+						DQ(Row + 1,Col + 1,1);
+						Demolish--;
+					}
+				}
+
+			}
+
+			if(Demolish&Col>0)
+			{
+				Subs = Row + "X" + eval(Col - 1);
+
+				// alert("Crash: " + Subs);	// Debug
+				if(Grid[Subs].Owner != "None")
+				{
+					DQ(Row,Col - 1,1);
+					Demolish--;
+				}
+			}
+
+			if(Demolish&Col<Columns - 1)
+			{
+				Subs = Row + "X" + eval(Col + 1);
+
+				if(Grid[Subs].Owner != "None")
+				{
+					DQ(Row,Col + 1,1);
+					Demolish--;
+				}
+			}
+		}
+
+		Destroyed -= Demolish;
+	}
+	else if(Disaster == 3)
+	{
+		Output += "<img src='flood.jpg'>";
+		Destroyed = 0;
+
+		// Loop through and destroy adjacent to rivers or bridges
+		for(Row=0; Row<Rows; Row++)
+		{
+			for(Col=0; Col<Columns; Col++)
+			{
+				Subs = Row + "X" + Col;
+
+				if(Grid[Subs].Owner != "None"&(Adj("River",Row,Col)|Adj("Bridge",Row,Col)))
+				{
+					DQ(Row,Col,1);
+					Destroyed++;
+				}
+			}
+		}
+	}
+	else if(Disaster == 4)
+	{
+		Output += "<img src='hail.jpg'>";
+		Player[Turn].Glass = 0;
+	}
+	else if(Disaster == 5)
+	{
+		Output += "<img src='hurricane.jpg'>";
+		Destroyed = Destroy(10);
+	}
+	else if(Disaster == 6)
+	{
+		Output += "<img src='mudslide.jpg'>";
+		Destroyed = Destroy(5);
+	}
+	else if(Disaster == 7)
+	{
+		Output += "<img src='rain.jpg'>";
+	}
+	else if(Disaster == 8)
+	{
+		Output += "<img src='tidalwave.jpg'>";
+		Player[Turn].Wood = 0;
+	}
+	else if(Disaster == 9)
+	{
+		Output += "<img src='tornado.jpg'>";
+		Destroyed = Destroy(6);
+	}
+	else if(Disaster == 10)
+	{
+		Output += "<img src='volcano.jpg'>";
+		Player[Turn].Gold = 0;
+	}
+
+	if(Player[Turn].Type == "C") Output += "<br><input type=button value=Continue onclick='parent.Draw();parent.AI()'>";
+	else Output += "<br><input type=button value=Continue onclick='parent.Draw()'>";
+
+	Output += "</font></form></center></body></html>";
+
+	Main.document.open();
+	Main.document.write(Output);
+	Main.document.close();
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// This function will destroy up to the Max # of buildings		Destroy(Max) = # Destroyed
+function Destroy(Max)
+{
+	Demolish = 0;
+
+	while(Max--)
+	{
+		var Col = Math.floor(Math.random() * Columns),
+			Row = Math.floor(Math.random() * Rows),
+
+		Subs = Row + "X" + Col;
+
+		if(Grid[Subs].Owner != "None")
+		{
+			DQ(Row,Col,1);
+			Demolish++;
+		}
+	}
+
+	return(Demolish);
+}
+// --></script>
+</head>
+<FRAMESET ROWS="*,1" resize=no border=0>
+<NOFRAMES>
+This game requires a frames-capable browser. <P>
+</NOFRAMES>
+        <FRAME NAME="Main" SRC="main.html">
+        <FRAME NAME="Blank" SRC="about:blank">
+</FRAMESET>
+</HTML>
+</html>

@@ -1,0 +1,1234 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="Author" content="Forest J. Handford">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Natural Disaster - Functional Specification</title>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+
+<p align="center"><font size="7">Natural Disaster - Functional
+Specification</font> </p>
+
+<p><font size="3">By Forest J. Handford</font> <br>
+<font size="3">Revision 1.0</font> <br>
+<font size="3">Copyright © East Coast Games, Inc. 2001</font> </p>
+
+<ul>
+    <li><a href="#Game Mechanics"><font size="3">Game Mechanics</font></a>
+        <ul>
+            <li><a href="#Core Game Play:"><font size="3">Core
+                Game Play</font></a> </li>
+            <li><a href="#Game Flow:"><font size="3">Game Flow</font></a>
+            </li>
+            <li><a href="#Game Play Elements:"><font size="3">Game
+                Play Elements</font></a> </li>
+            <li><a href="#Multi-player:"><font size="3">Multi-player</font></a>
+            </li>
+        </ul>
+    </li>
+    <li><a href="#User Interface"><font size="3">User Interface</font></a>
+        <ul>
+            <li><a href="#Flowchart:"><font size="3">Flowchart</font></a>
+            </li>
+            <li><a href="#Functional Requirements:"><font
+                size="3">Functional Requirements</font></a> </li>
+            <li><a href="#Mockups:"><font size="3">Mockups</font></a>
+            </li>
+            <li><a href="#GUI Objects"><font size="3">GUI Objects</font></a>
+            </li>
+        </ul>
+    </li>
+    <li><a href="#Art and Video"><font size="3">Art and Video</font></a>
+        <ul>
+            <li><a href="#Overall Goals:"><font size="3">Overall
+                Goals</font></a> </li>
+            <li><a href="#2D Art:"><font size="3">2D Art</font></a>
+            </li>
+        </ul>
+    </li>
+    <li><a href="#Sound and Music"><font size="3">Sound and Music</font></a>
+    </li>
+</ul>
+
+<p><a name="Game Mechanics"></a></p>
+
+<p align="center"><font size="6"><b>Game Mechanics</b></font> </p>
+
+<p><a name="Core Game Play:"></a><font size="5">Core Game Play:</font>
+</p>
+
+<p>Natural Disaster is going to be a one to six player turn based
+strategy game.&nbsp; The game will be a competetion for points.&nbsp;
+As a single player game the points can be used to compare against
+previous scores.&nbsp; With multiple players the game is a battle
+for the most points. </p>
+
+<p>All of the players are the presidents of local building
+companies. To earn points the players must build structures, win <a
+href="#Contract Screen">contracts</a>, and with multiple players
+compete for land.&nbsp; To <a href="#Build Screen">build</a>
+structures the players need to use resources.&nbsp; Players
+accumulate resources at the beginning of their turn.&nbsp; Some
+structures are worth more points but they also cost more
+resources.&nbsp; There is a tech tree that causes only one
+building type to be useable in the beginning of the game.&nbsp;
+Players can sell structures to other players for points and/or
+resources. </p>
+
+<p>There is a limited amount of land for the players to build on.&nbsp;
+<a href="#Contract Screen">Contracts</a> all have different
+requirements like structures needed to fill the contract must all
+be adjacent to each other.&nbsp; Once a player has <a
+href="#Build Screen">built</a> a structure (s)he can <a
+href="#Sell Screen">sell</a> it to another player, <a
+href="#Trade Screen">trade</a> it, demolish it, or use it to
+fulfill a <a href="#Contract Screen">contract</a>.&nbsp; A player
+does not own properties they built and used to fulfill contracts.
+Players cannot sell or trade structures that they have used to
+fulfill a contract.&nbsp; A player can demolish a structure that
+they own at twice the point cost of the original structure.&nbsp;
+Once a player has demolished a structure (s)he can build a new
+structure on the land.&nbsp; If the player does not build a new
+structure the land will be useable by other players. </p>
+
+<p>The game will <a href="#Credits/End Game Screen">end</a> when
+all of the available land has been built on.&nbsp; Players will
+only be able to build on land that is adjacent to a <a
+href="#Road Tiles:">road</a>.&nbsp; Roads and <a
+href="#Bridge Tiles:">bridges</a> cannot be destroyed.&nbsp; All
+players can build roads for a small amount of resources.&nbsp;
+All roads must be connected. No points are accumulated from
+building roads. Rivers can have bridges built over them. Bridges
+must be built over water to connect two existing roads. </p>
+
+<p>The resource a player gets during his or her turn will be
+determined at random. Sometimes instead of getting a resource a
+natural disaster will occur. The natural disaster will cause one
+of several things to happen like a loss of resources or the
+destruction of an existing building. </p>
+
+<p><a name="Game Flow:"></a><font size="5">Game Flow:</font> </p>
+
+<p>The game will <a href="#Setup Screen">start</a> by prompting
+for the number of players. Each player will then be asked to <a
+href="#Player Name Entry Screen">enter their name</a>. After all
+the names have been entered the game will begin. Each player will
+take a turn in the order that the players entered their names. </p>
+
+<p>The <a href="#Setup Screen">map size</a> will be determined by
+the players. The map or playing field will be <a
+href="#Random Map Generation">randomly generated</a>. Most of the
+land will be buildable but at least one <a href="#Road Tiles:">road</a>
+will be in the map. The map will also have at least one river. </p>
+
+<p>When a player's turn starts they will be given either two
+units of a random resource or a natural disaster will occur. The
+resources are wood, steel, concrete, glass, and gold. Gold can be
+used to buy any of the other four resources and works essentially
+as a &quot;wild-card&quot; resource. A natural disaster can cause
+the loss or addition of resources, the destruction of structure(s).
+</p>
+
+<p>After the player receives the resource their score, and
+resource counts will be <a href="#Main Game Screen">displayed</a>.
+The player's turn last's until (s)he chooses to end the turn. A
+player can <a href="#Build Screen">build</a>, <a
+href="#Sell Screen">sell</a>, <a href="#Trade Screen">trade</a>,
+bid for a <a href="#Contract Screen">contract</a>, and demolish
+buildings during their turn. A player can only build a structure
+if they have the resources and meet the requirements. </p>
+
+<p>A player can sell a structure to any other player. Roads and
+bridges are not owned by players. The buyer will be asked whether
+they want to buy the offered property. If they decline, the
+seller can make an offer to another player. The buyer gets no
+points with the purchase. The seller will not lose the points he
+or she earned for building the structure. The seller can ask for
+any amount of points and or resources. </p>
+
+<p>A player can trade any structure or structures with any other
+player's structure(s). The tradee must agree to the trade. Trades
+only effect ownership, they do not effect points or resources. A
+structure used to fulfill a contract can not be traded. </p>
+
+<p>There are always three available contracts. A player will win
+any contract they bid for if they meet the contract's requirement.
+Once a bid is won the player will no longer own the property.
+When a bid is won the contract is replaced by a new contract.
+When a player demolishes a structure they lose twice the point
+value of the structure. </p>
+
+<p>When a player ends their turn the map will be checked to see
+if any land is still available to be built on. If there is no
+land left, the game will end. The player with the most points
+will be declared a winner. If there is a tie the winner will be
+determined based on the number of resources they have. </p>
+
+<p><a name="Game Play Elements:"></a><font size="5">Game Play
+Elements:</font> <br>
+&nbsp; </p>
+
+<table border="1">
+    <tr>
+        <td><font size="4">Structures</font></td>
+        <td><font size="4">Resource Cost</font></td>
+        <td><font size="4">Point Value</font></td>
+        <td><font size="4">Requirements</font></td>
+    </tr>
+    <tr>
+        <td><a href="#Road Tiles:">Road</a></td>
+        <td>1 Concrete</td>
+        <td>0</td>
+        <td>Must be built attached to other existing road
+        structures.</td>
+    </tr>
+    <tr>
+        <td><a href="#Bridge Tiles:">Bridge</a></td>
+        <td>2 Concrete</td>
+        <td>0</td>
+        <td>Must be built over a river <br>
+        Must be built to connect to existing roads</td>
+    </tr>
+    <tr>
+        <td><a href="#Residential Tiles:">Residential</a></td>
+        <td>1 Wood</td>
+        <td>100</td>
+        <td>None</td>
+    </tr>
+    <tr>
+        <td><a href="#Industrial Tiles:">Industrial</a></td>
+        <td>1 Concrete <br>
+        1 Steel</td>
+        <td>200</td>
+        <td>Can only be built if the player has previously built
+        a residential structure.</td>
+    </tr>
+    <tr>
+        <td><a href="#Commercial Tiles:">Commercial</a></td>
+        <td>1 Concrete <br>
+        1 Glass</td>
+        <td>200</td>
+        <td>Can only be built if the player has previously built
+        a residential structure.</td>
+    </tr>
+    <tr>
+        <td><a href="#Government Tiles:">Government</a></td>
+        <td>1 Steel <br>
+        1 Glass <br>
+        1 Wood</td>
+        <td>200</td>
+        <td>Can only be built if the player has previously built
+        an industrial building. <br>
+        Can only be built if the player has previously built a
+        commercial building.</td>
+    </tr>
+    <tr>
+        <td><a href="#Recreational Tiles:">Recreational</a></td>
+        <td>2 Steel <br>
+        1 Glass <br>
+        1 Wood</td>
+        <td>300</td>
+        <td>Can only be built if the player has previously built
+        an industrial building. <br>
+        Can only be built if the player has previously built a
+        commercial building.</td>
+    </tr>
+    <tr>
+        <td><a href="#Educational Tiles:">Educational</a></td>
+        <td>1 Concrete <br>
+        1 Glass <br>
+        1 Wood</td>
+        <td>350</td>
+        <td>Can only be built if a government building has
+        previously been built.</td>
+    </tr>
+</table>
+
+<p><br>
+&nbsp; <br>
+&nbsp; </p>
+
+<table border="0" cellpadding="3">
+    <tr>
+        <td valign="top"><font size="4">Natural Disasters</font></td>
+        <td valign="top"><font size="4">Side Effect </font><font
+        size="3">- For the current turn</font></td>
+    </tr>
+    <tr>
+        <td valign="top">Avalanche</td>
+        <td valign="top">An avalanche happened at a steel mine.
+        The price (in gold) of steel has doubled.</td>
+    </tr>
+    <tr>
+        <td valign="top">Blizzard</td>
+        <td valign="top">The community is covered with snow and
+        the carpenters can't work. Nothing can be built this turn.</td>
+    </tr>
+    <tr>
+        <td valign="top">Fire</td>
+        <td valign="top">A fire was started at a random building
+        that caused the building and up to three neighboring
+        buildings to be destroyed.</td>
+    </tr>
+    <tr>
+        <td valign="top">Flood</td>
+        <td valign="top">The rivers overflow and buildings
+        adjacent to the rivers are destroyed.</td>
+    </tr>
+    <tr>
+        <td valign="top">Hale</td>
+        <td valign="top">A hale storm has hit the community that
+        destroyed several windows. You use all of your glass to
+        help repair the damages.</td>
+    </tr>
+    <tr>
+        <td valign="top">Hurricane</td>
+        <td valign="top">A hurricane has traveled up the coast
+        and hit your community. Several (random) structures are
+        destroyed.</td>
+    </tr>
+    <tr>
+        <td valign="top">Mud slide</td>
+        <td valign="top">A mud slide wipes out a few (random)
+        residences in your community.</td>
+    </tr>
+    <tr>
+        <td valign="top">Rain</td>
+        <td valign="top">Your caught in a rain storm while
+        walking through a local forest. When the rain starts you
+        seek shelter in a cave where you find gold.</td>
+    </tr>
+    <tr>
+        <td valign="top">Tidal Wave</td>
+        <td valign="top">A tidal wave destroys the docks and
+        piers outside of your city and you generously donate (all)
+        of your wood to help rebuild.</td>
+    </tr>
+    <tr>
+        <td valign="top">Tornado</td>
+        <td valign="top">A tornado destroys a few buildings in
+        your community.</td>
+    </tr>
+    <tr>
+        <td valign="top">Volcanic Eruption</td>
+        <td valign="top">A volcanic eruption in Hawaii causes
+        hundreds to lose their homes. You generously send all
+        your gold to help.</td>
+    </tr>
+</table>
+
+<p><br>
+&nbsp; <br>
+&nbsp; </p>
+
+<table border="1">
+    <tr>
+        <td><font size="4">Contract</font></td>
+        <td><font size="4">Details</font></td>
+        <td><font size="4">Point Value</font></td>
+        <td><font size="4">Requirements</font></td>
+    </tr>
+    <tr>
+        <td>Apartments</td>
+        <td>Allen Peterson wants to make money by renting
+        apartments.</td>
+        <td>240</td>
+        <td>Two adjacent residential structures.</td>
+    </tr>
+    <tr>
+        <td>Arcade</td>
+        <td>The Funcade chain wants to expand in your city. They
+        want to have an arcade within walking distance of homes
+        so that children can get there without their parents.</td>
+        <td>160</td>
+        <td>One recreational structure adjacent to at least one
+        residential structure.</td>
+    </tr>
+    <tr>
+        <td>City Hall</td>
+        <td>The city needs to a city hall.</td>
+        <td>120</td>
+        <td>One government structure.</td>
+    </tr>
+    <tr>
+        <td>Condos</td>
+        <td><ol>
+            <li>PineWood Community Housing is looking for a new
+                residential area that they can convert into
+                Condominiums.</li>
+            <li>Century Condominium has just been formed and
+                needs residential structures.</li>
+        </ol>
+        </td>
+        <td>900</td>
+        <td>six adjacent residential structures.</td>
+    </tr>
+    <tr>
+        <td>College Campus</td>
+        <td>The state college wants to expand in your area.</td>
+        <td>290</td>
+        <td>Two adjacent educational structures. At least one of
+        them must be adjacent to a residence.</td>
+    </tr>
+    <tr>
+        <td>Home</td>
+        <td><ol>
+            <li>The Smith family needs a home.</li>
+            <li>The Monroe family needs a home.</li>
+            <li>The Alexanders need a home.</li>
+        </ol>
+        </td>
+        <td>120</td>
+        <td>One residential structure.</td>
+    </tr>
+    <tr>
+        <td>Hydro-electric Power Plant</td>
+        <td>A local power company needs a power plant.</td>
+        <td>160</td>
+        <td>One industrial structure adjacent to a river.</td>
+    </tr>
+    <tr>
+        <td>Library</td>
+        <td>The city needs a library.</td>
+        <td>120</td>
+        <td>One educational structure.</td>
+    </tr>
+    <tr>
+        <td>Paper Manufacturing Plant</td>
+        <td>Papyrus Industries wants to build a paper
+        manufacturing plant. The city will not let them own
+        property near residences because of the smell.</td>
+        <td>160</td>
+        <td>One industrial structure that is not adjacent to a
+        residential structure.</td>
+    </tr>
+    <tr>
+        <td>Police Station</td>
+        <td>The city needs a police station.</td>
+        <td>120</td>
+        <td>One government structure.</td>
+    </tr>
+    <tr>
+        <td>Post Office</td>
+        <td>The national government has decided to build a new
+        post office in your city.</td>
+        <td>120</td>
+        <td>One government structure.</td>
+    </tr>
+    <tr>
+        <td>Playground</td>
+        <td>To improve the city's public image they want to build
+        a playground within walking distance of the local homes.</td>
+        <td>160</td>
+        <td>One recreational structure adjacent to at least one
+        residence.</td>
+    </tr>
+    <tr>
+        <td>Recreational Structure</td>
+        <td>The Tapir foundation wants to buy a recreational
+        center that it can use as an edutainment facility to
+        teach about endangered species.</td>
+        <td>120</td>
+        <td>One recreational structure.</td>
+    </tr>
+    <tr>
+        <td>Restaurant Chain</td>
+        <td>Tummy Friends is looking to expand in your community.</td>
+        <td>160</td>
+        <td>One commercial structure adjacent to at least one
+        residential structure.</td>
+    </tr>
+    <tr>
+        <td>Saw Mill</td>
+        <td>Loggerama industries is looking for a saw mill that
+        they can reach by boat.</td>
+        <td>160</td>
+        <td>One industrial structure adjacent to a river.</td>
+    </tr>
+    <tr>
+        <td>School District</td>
+        <td>The state needs a new school district. This will
+        require three educational facilities.</td>
+        <td>500</td>
+        <td>Three educational structures.</td>
+    </tr>
+    <tr>
+        <td>Shopping Plaza</td>
+        <td>The Red Baron conglomerate wants to expand and is
+        willing to pay top dollar for a good shopping plaza.</td>
+        <td>750</td>
+        <td>Four commercial structures.</td>
+    </tr>
+</table>
+
+<p><a name="Random Map Generation"></a><font color="#000000"
+size="4">Random Map Generation</font> </p>
+
+<p><font color="#000000" size="3">All maps will be generated
+randomly. All maps will have one to three rivers and one road.
+The river(s) will be generated first. Next the road will be
+generated. Finally the rest of the land will be generated.</font>
+</p>
+
+<p><font color="#000000" size="3">Except for where rivers turn or
+meet they must all be thin enough to build a road over. When a
+river hits another river it will join the other river. The rivers
+can have no more then two direction changes. Rivers cannot start
+on a corner of the playing field.</font> </p>
+
+<p><font color="#000000" size="3">The roads can have no more then
+two direction changes unless it is to avoid a river turn or
+junction. If a road changes direction because of a river turn or
+junction and the road has changed direction previously the road
+will go in the direction that it had been in prior to the last
+direction change. Roads cannot start on the corner of a playing
+field.</font> </p>
+
+<p><a name="Multi-player:"></a><font color="#000000" size="5">Multi-player:</font>
+</p>
+
+<p align="left"><font color="#000000" size="3">One to six players
+can play Natural Disaster. All players must use the same computer
+to play. In single player mode the player works towards a high
+score. For multiple players each player will compete for the
+highest number of points. If the game ends with a point tie the
+winner will be determined by the number of resources left. With
+multiple players this game is strictly a free for all. With one
+player, changing the turn only allocates more resources. In
+single player mode the player cannot sell or trade structures.</font>
+</p>
+
+<p align="center">&nbsp;</p>
+
+<p align="center"><a name="User Interface"></a><font
+color="#000000" size="6"><b>User Interface</b></font> </p>
+
+<p align="center">&nbsp;</p>
+
+<p align="left"><a name="Flowchart:"></a><font color="#000000"
+size="5">Flowchart:</font> </p>
+
+<p align="center"><img src="GUI.gif" width="512" height="639"> </p>
+
+<p align="left"><a name="Functional Requirements:"></a><font
+size="5">Functional Requirements:</font>&nbsp; </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="6" cellspacing="6">
+    <tr>
+        <td><font size="4">Screen</font></td>
+        <td><font size="4">Functional Requirements</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="#Setup Screen">Game Setup</a></td>
+        <td valign="top">Number of players Selection. <br>
+        Map Size Selection.</td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="#Player Name Entry Screen">Player
+        Name Entry</a></td>
+        <td valign="top">Player name entry.</td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="#Main Game Screen">Main/Game
+        Screen</a></td>
+        <td valign="top">Display Current Map. <br>
+        Allow players to select structures for contracts,
+        selling, trading, demolishing. <br>
+        Allow players to select empty land for building. <br>
+        Allow player to change turns. <br>
+        Allow player to demolish structures. <br>
+        Allow land or buildings to be selected. <br>
+        Allow players to enter the Build Screen. <br>
+        Allow players to enter the Sell Screen. <br>
+        Allow players to enter the Trade Screen. <br>
+        Allow players to enter the Contract Screen. <br>
+        Display current players score. <br>
+        Display current players resources.</td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="#Build Screen">Build</a></td>
+        <td valign="top">Structure to be built selection.</td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="#Sell Screen">Sell</a></td>
+        <td valign="top">Cost Selection. <br>
+        Buyer Selection.</td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="#Trade Screen">Trade</a></td>
+        <td valign="top">Tradee Selection.</td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="#Contract Screen">Contract</a></td>
+        <td valign="top">Contract Selection.</td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="#Credits/End Game Screen">Credits/End
+        Game</a></td>
+        <td valign="top">Credits displayed. <br>
+        Score breakdown: <ul>
+            <li>&nbsp; </li>
+            <li>Points Listed.</li>
+            <li>Resources Listed.</li>
+            <li>Winner Declared and players sorted by score.</li>
+        </ul>
+        </td>
+    </tr>
+</table>
+</center></div>
+
+<p><a name="Mockups:"></a></p>
+
+<p><font color="#000000" size="5">Mockups:</font> <br>
+&nbsp; </p>
+
+<form method="POST">
+    <p align="center"><a href="#Setup Screen"><font size="4">Game
+    Setup Screen</font></a> &nbsp; </p>
+    <div align="center"><center><table border="1" cellpadding="6"
+    cellspacing="6">
+        <tr>
+            <td><font size="4">Setup</font> <p>Number of Players&nbsp;<select
+            name="D1" size="1">
+                <option>1</option>
+                <option selected>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+            </select> </p>
+            <p align="center">Map Size&nbsp;<input type="text"
+            size="4" name="T1" value="25">X&nbsp;<input
+            type="text" size="4" name="T2" value="25"> </p>
+            <p align="center"><input type="button" name="B1"
+            value="Let the Construction Begin!"> </p>
+            </td>
+        </tr>
+    </table>
+    </center></div><p align="center"><a
+    href="#Player Name Entry Screen"><font size="4">Player Name
+    Entry Screen</font></a> &nbsp; </p>
+    <div align="center"><center><table border="1" cellpadding="6"
+    cellspacing="6">
+        <tr>
+            <td><font size="4">Enter Your Names</font> <p><font
+            size="3">Player 1</font><input type="text" size="20"
+            name="T3"> </p>
+            <p>Player 2&nbsp;<input type="text" size="20"
+            name="T4"> </p>
+            <p>.... </p>
+            <p align="center">Player X&nbsp;<input type="text"
+            size="20" name="T5"> </p>
+            <p align="center"><input type="button" name="B8"
+            value="Continue"> </p>
+            </td>
+        </tr>
+    </table>
+    </center></div><p align="center"><a href="#Main Game Screen"><font
+    size="4">Main Game Screen</font></a> &nbsp; </p>
+    <div align="center"><center><table border="1" cellpadding="6"
+    cellspacing="6">
+        <tr>
+            <td><img src="Main%20Screen.gif" width="640"
+            height="480"></td>
+        </tr>
+    </table>
+    </center></div><p align="center"><a href="#Build Screen"><font
+    size="4">Build Screen</font></a> &nbsp; </p>
+    <div align="center"><center><table border="1" cellpadding="6"
+    cellspacing="6">
+        <tr>
+            <td><font size="4">Build</font> <p align="center">What
+            do you want to build?&nbsp;<select name="D2" size="1">
+                <option value="Road">Road</option>
+                <option value="Bridge">Bridge</option>
+                <option value="Residential">Residential</option>
+                <option value="Industrial">Industrial</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Government">Government</option>
+                <option value="Recreational">Recreational</option>
+                <option value="Educational">Educational</option>
+            </select> <br>
+            <input type="button" name="B2" value="Build"> </p>
+            </td>
+        </tr>
+    </table>
+    </center></div><p align="center"><a href="#Sell Screen"><font
+    size="4">Sell Screen</font></a> &nbsp; </p>
+    <div align="center"><center><table border="1" cellpadding="6"
+    cellspacing="6">
+        <tr>
+            <td><font size="4">Sell</font> <p>Who will you sell
+            it to?&nbsp;<select name="D5" size="1">
+                <option>Roderick Loch</option>
+            </select> </p>
+            <p>What will you sell it for </p>
+            <p align="center">Points&nbsp;<input type="text"
+            size="6" name="T6"> <br>
+            Gold&nbsp;<input type="text" size="6" name="T7"> <br>
+            Glass&nbsp;<input type="text" size="6" name="T8"> <br>
+            Concrete&nbsp;<input type="text" size="6" name="T9"> <br>
+            Steel&nbsp;<input type="text" size="6" name="T10"> <br>
+            Wood&nbsp;<input type="text" size="6" name="T11"> </p>
+            <p align="center"><input type="button" name="B3"
+            value="Sell"> </p>
+            </td>
+        </tr>
+    </table>
+    </center></div><p align="center"><a href="#Trade Screen"><font
+    size="4">Trade Screen</font></a> &nbsp; </p>
+    <div align="center"><center><table border="1" cellpadding="6"
+    cellspacing="6">
+        <tr>
+            <td><font size="4">Trade</font> <p align="center"><font
+            size="3">Trade With&nbsp;<select name="D4" size="1">
+                <option>Roderick Loch</option>
+            </select></font> </p>
+            <p align="center"><input type="button" name="B4"
+            value="Request Trade"> </p>
+            </td>
+        </tr>
+    </table>
+    </center></div><p align="center"><a href="#Contract Screen"><font
+    size="4">Contract Screen</font></a> &nbsp; </p>
+    <div align="center"><center><table border="1" cellpadding="6"
+    cellspacing="6">
+        <tr>
+            <td><font size="4">Contracts</font> <br>
+            &nbsp; <table border="0" cellpadding="6"
+            cellspacing="6">
+                <tr>
+                    <td valign="top"><font size="4">Home</font> <p>The
+                    Smith family needs a home.&nbsp; </p>
+                    <p align="center">One residential structure
+                    needed. </p>
+                    <p align="center"><input type="button"
+                    name="B7" value="Bid"> </p>
+                    </td>
+                    <td valign="top"><font size="4">Saw Mill</font>
+                    <p>Loggerama industries is looking for a saw
+                    mill that they can reach by boat. </p>
+                    <p align="center">One industrial structure
+                    adjacent to a river needed. </p>
+                    <p align="center"><input type="button"
+                    name="B6" value="Bid"> </p>
+                    </td>
+                    <td valign="top"><font size="4">Hydro-electric
+                    Power Plant</font> <p>A local power company
+                    needs a power plant. </p>
+                    <p align="center">One industrial structure
+                    adjacent to a river is needed. </p>
+                    <p align="center"><input type="button"
+                    name="B5" value="Bid"> </p>
+                    </td>
+                </tr>
+            </table>
+            </td>
+        </tr>
+    </table>
+    </center></div><p align="center"><a
+    href="#Credits/End Game Screen"><font size="4">Credits/End
+    Game Screen</font></a> &nbsp; </p>
+    <div align="center"><center><table border="1" cellpadding="6"
+    cellspacing="6">
+        <tr>
+            <td><font size="4">Score</font> <br>
+            &nbsp; <table border="1" cellpadding="3"
+            cellspacing="3">
+                <tr>
+                    <td>Place</td>
+                    <td>Player</td>
+                    <td>Score</td>
+                    <td>Gold</td>
+                    <td>Steel</td>
+                    <td>Wood</td>
+                    <td>Concrete</td>
+                    <td>Glass</td>
+                </tr>
+                <tr>
+                    <td>1st</td>
+                    <td>Admiral Rackham</td>
+                    <td>1590</td>
+                    <td>6</td>
+                    <td>3</td>
+                    <td>1</td>
+                    <td>4</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>2nd</td>
+                    <td>Roderick Loch</td>
+                    <td>980</td>
+                    <td>3</td>
+                    <td>2</td>
+                    <td>4</td>
+                    <td>0</td>
+                    <td>2</td>
+                </tr>
+            </table>
+            <p align="center"><font size="4">Credits</font> </p>
+            <p align="center"><font size="3">Natural Disaster by
+            ECG Studios</font> </p>
+            <p align="center"><font size="3">Producer - Forest J.
+            Handford</font> </p>
+            <p align="center"><font size="3">Game Design - Forest
+            J. Handford</font> </p>
+            <p align="center"><font size="3">Lead Programmer -
+            Forest J. Handford</font> </p>
+            <p align="center">Lead Artist - Mairi Handford </p>
+            </td>
+        </tr>
+    </table>
+    </center></div>
+</form>
+
+<p><a name="GUI Objects"></a><font color="#000000" size="5">GUI
+Objects</font> </p>
+
+<p><a name="Setup Screen"></a><font color="#000000" size="4">Setup
+Screen:</font> </p>
+
+<p>Player Number - This should define how many players there are.
+The only options should be 1, 2, 3, 4, 5, and 6. </p>
+
+<p>Screen Size - This will allow the players to determine how
+many tiles will be in the game. There should be a minimum size
+and maximum size imposed. </p>
+
+<p>Begin Button - This will cause the screen to be exited and the
+<a href="#Player Name Entry Screen"><font size="3">Player Name
+Entry Screen</font></a><font size="3"> to be launched.</font> </p>
+
+<p><a name="Player Name Entry Screen"></a><font size="4">Player
+Name Entry Screen:</font> </p>
+
+<p><font size="3">Player Name - A prompt for each player should
+be given where they can enter their name.</font> </p>
+
+<p><font size="3">Continue Button - When pressed the name fields
+should be checked to insure they are all filled out. If they are
+not filled out the user should be given a warning and forced back
+to the screen. If all the fields are filled out this should
+launch the game / </font><a href="#Main Game Screen"><font
+size="3">main game screen</font></a><font size="3">.</font> </p>
+
+<p><a name="Main Game Screen"></a><font color="#000000" size="4">Main
+Game Screen:</font> </p>
+
+<p><font color="#000000" size="3">Player Turn Button - The button
+should list the name of the current player. When clicked the
+players turn should end and the next player's turn and resource
+allocation will begin unless the game is over. If all the tiles
+are filled the game will end and the </font><a
+href="#Credits/End Game Screen"><font color="#000000" size="3">Credits/End
+Game Screen</font></a><font color="#000000" size="3"> will Appear.</font>
+</p>
+
+<p>Build Button - When clicked the player will be taken to the <a
+href="#Build Screen">build screen</a>. </p>
+
+<p>Demolish - When clicked the player will be allowed to select a
+building to demolish. </p>
+
+<p>Sell - When clicked the player will be brought to the <a
+href="#Sell Screen">Sell Screen</a>. </p>
+
+<p>Trade - When clicked the player will be brought to the <a
+href="#Trade Screen">trade screen</a>. </p>
+
+<p>Contracts - When clicked the player will be brought to the <a
+href="#Contract Screen">contracts screen</a>. </p>
+
+<p><a name="Build Screen"></a><font color="#000000" size="4">Build
+Screen</font> </p>
+
+<p>Structure Type - This prompt will allow the user to choose
+what structure type to build. Only structures that the player has
+enough resources for and the tech tree requirements will be
+listed. </p>
+
+<p>Build Button - Once pressed the player's resources will be
+appropriately reduced and the structure will be built. </p>
+
+<p><a name="Sell Screen"></a><font size="4">Sell Screen</font> </p>
+
+<p><font size="3">Buyer - This field will be used to choose the
+buyer to make an offer to.</font> </p>
+
+<p>Points - This field will be used to ask for 0 - X # of points
+for the land. </p>
+
+<p>Gold - This field will be used to ask for 0 - X # of gold
+units for the land. </p>
+
+<p>Glass - This field will be used to ask for 0 - X # of glass
+units for the land. </p>
+
+<p>Concrete - This field will be used to ask for 0 - X # of
+concrete units for the land. </p>
+
+<p>Steel - This field will be used to ask for 0 - X # of steel
+units for the land. </p>
+
+<p>Wood - This field will be used to ask for 0 - X # of wood
+units for the land. </p>
+
+<p>Sell Button - When clicked the offer will be checked to see if
+the potential buyer has the right number of resources. If the
+buyer doesn't the seller will be given a list of what the player
+has and which fields were too high. If the buyer does have the
+resources the buyer will be prompted with the offer. If the buyer
+accepts, the resources and property will change ownership. The
+player will be returned to the <a href="#Main Game Screen">main
+game screen</a>. </p>
+
+<p><a name="Trade Screen"></a><font size="4">Trade Screen</font> </p>
+
+<p>Tradee - This field will be filled with the person to trade
+the ownership to. </p>
+
+<p>Trade Button - When clicked the tradee will be asked if they
+are willing to trade. If they agree the property will be traded.
+The player will be returned to the <a href="#Main Game Screen">main
+game screen</a>. </p>
+
+<p><a name="Contract Screen"></a><font size="4">Contract Screen</font>
+</p>
+
+<p>Contract - Each of the three currently available contracts
+will be listed. </p>
+
+<p>Bid button - When clicked the player will be prompted to
+choose what property to use for the bid. If the property meets
+the bid requirements the player will lose ownership of the
+property and gain the points. </p>
+
+<p><a name="Credits/End Game Screen"></a><font size="4">Credits/End
+Game Screen</font> </p>
+
+<p>Score - The player's placement and scoring will be listed. </p>
+
+<p align="left">Credits - The game credits will be listed. </p>
+
+<p align="center">&nbsp;</p>
+
+<p align="center"><a name="Art and Video"></a><font size="6"><b>Art
+and Video</b></font> </p>
+
+<p><a name="Overall Goals:"></a><font size="5">Overall Goals:</font>
+</p>
+
+<p><font size="3">Our lead artist will determine the </font>motifs,
+characteristics, style, and mood to be used. In general we want
+this to be a game appropriate for all ages, so none of the
+buildings will be from the red light district! </p>
+
+<p><a name="2D Art:"></a><font size="5">2D Art:</font> </p>
+
+<p><font size="4">Tile Art:</font> </p>
+
+<p><font size="3">All Tiles will be the same size (.75 inches X .75
+inches or 54 pixels X 54 pixels). All images will be saved in a
+CompuServe Graphics Interchange (.gif) format.</font> </p>
+
+<p><a name="Road Tiles:"></a><font size="4">Road Tiles:</font> </p>
+
+<p>Horizontal - A road tile that goes from left to right. (File
+name: RoadH.gif ) <font color="#FF0000">Done</font></p>
+
+<p>Horizontal Top Intersection - An upside down T intersection. (RoadHT.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>Horizontal Bottom Intersection - A T intersection. (RoadHB.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>Vertical - A road tile that goes from top to bottom. (File
+name: RoadV.gif ) <font color="#FF0000">Done</font></p>
+
+<p>Vertical Left Intersection - A vertical road that has an
+intersection on the left. (RoadVL.gif) <font color="#FF0000">Done</font></p>
+
+<p>Vertical Right Intersection - A vertical road that has an
+intersection on the right. (RoadVR.gif) <font color="#FF0000">Done</font></p>
+
+<p>Crossroads - A road tile where two roads cross. (File name:
+RoadC.gif) <font color="#FF0000">Done</font></p>
+
+<p>Northern road turning East + Eastward road turning North. (RoadNE.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>Northern road turning West + Westward road turning North. (RoadNW.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>Southern road turning East + Eastward road turning South. (RoadSE.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>Southern road turning West + Westward road turning South. (RoadSW.gif)
+<font color="#FF0000">Done</font></p>
+
+<p><font size="4">River Tiles:</font> </p>
+
+<p>Horizontal - A river that goes from left to right. (File name:
+RiverH.gif ) <font color="#FF0000">Done</font></p>
+
+<p>Horizontal Top Intersection - An upside down T intersection. (RiverHT.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>Horizontal Bottom Intersection - A T intersection. (RiverHB.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>Vertical - A river that goes from top to bottom. (File name:
+RiverV.gif ) <font color="#FF0000">Done</font></p>
+
+<p>Vertical Left Intersection - A vertical river that has an
+intersection on the left. (RiverVL.gif) <font color="#FF0000">Done</font></p>
+
+<p>Vertical Right Intersection - A vertical river that has an
+intersection on the right. (RiverVR.gif) <font color="#FF0000">Done</font></p>
+
+<p>Northern river turning East + Eastward river turning North. (RiverNE.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>Northern river turning West + Westward river turning North. (RiverNW.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>Southern river turning East + Eastward river turning South. (RiverSE.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>Southern river turning West + Westward river turning South. (RiverSW.gif)
+<font color="#FF0000">Done</font></p>
+
+<p>River crossing. (RiverC.gif) <font color="#FF0000">Done</font></p>
+
+<p>&nbsp;</p>
+
+<p><a name="Bridge Tiles:"></a><font color="#000000" size="4">Bridge
+Tiles:</font> </p>
+
+<p><font color="#000000" size="3">Horizontal - A horizontal
+bridge that covers a vertical river. (BridgeH.gif)</font> </p>
+
+<p><font color="#000000" size="3">Vertical - A vertical bridge
+that covers a horizontal river. (BridgeV.gif)</font> </p>
+
+<p><a name="Empty Land Tiles:"></a><font color="#000000" size="4">Empty
+Land Tiles:</font> </p>
+
+<p><font color="#000000" size="3">These are tiles for land that
+can be built on. We can make any number of these and they will be
+chosen randomly. The file names should be EmptyN.gif where the N
+is replaced with a positive number (1-x).</font> <font
+color="#FF0000">Done</font></p>
+
+<p><a name="Structure Tiles:"></a><font color="#000000" size="4">Structure
+Tiles:</font> </p>
+
+<p><font color="#000000" size="3">The structures Tiles are very
+important. All of a players structures must be easily
+identifiable as owned by that player. There are three obvious
+ways to do this, the first is to have all of a player's
+structures be a certain color. If we go with a color scheme we
+must be careful that this won't pose a problem to color-blind
+players. The second way is to have different styles, say one
+player's structures has a South-West theme and another player's
+has a roman theme. The last choose would be to mix the two ideas
+by using themes and colors. This will be up to the Lead Artist to
+decide.</font> </p>
+
+<p><a name="Residential Tiles:"></a><font color="#000000"
+size="4">Residential Tiles:</font> </p>
+
+<p><font color="#000000" size="3">Non-player - These are
+residences that are not owned by players (i.e.: they were sold
+via a contract.) (ResN.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 1 - These are residences
+that are owned by player 1. (Res1.gif)</font> <font
+color="#FF0000">Done</font></p>
+
+<p><font color="#000000" size="3">Player 2 - These are residences
+that are owned by player 2. (Res2.gif)</font> <font
+color="#FF0000">Done</font></p>
+
+<p><font color="#000000" size="3">Player 3 - These are residences
+that are owned by player 3. (Res3.gif)</font> <font
+color="#FF0000">Done</font></p>
+
+<p><font color="#000000" size="3">Player 4 - These are residences
+that are owned by player 4. (Res4.gif)</font> <font
+color="#FF0000">Done</font></p>
+
+<p><font color="#000000" size="3">Player 5 - These are residences
+that are owned by player 5. (Res5.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 6 - These are residences
+that are owned by player 6. (Res6.gif)</font> </p>
+
+<p><a name="Industrial Tiles:"></a><font size="4">Industrial
+Tiles:</font> </p>
+
+<p><font color="#000000" size="3">Non-player - These are
+industrial structures that are not owned by players (i.e.: they
+were sold via a contract.) (IndN.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 1 - These are industrial
+structures that are owned by player 1. (Ind1.gif)</font> <font
+color="#FF0000">Done</font></p>
+
+<p><font color="#000000" size="3">Player 2 - These are industrial
+structures that are owned by player 2. (Ind2.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 3 - These are industrial
+structures that are owned by player 3. (Ind3.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 4 - These are industrial
+structures that are owned by player 4. (Ind4.gif)</font> <font
+color="#FF0000">Done</font></p>
+
+<p><font color="#000000" size="3">Player 5 - These are industrial
+structures that are owned by player 5. (Ind5.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 6 - These are industrial
+structures that are owned by player 6. (Ind6.gif)</font> </p>
+
+<p><a name="Commercial Tiles:"></a><font color="#000000" size="4">Commercial
+Tiles:</font> </p>
+
+<p><font color="#000000" size="3">Non-player - These are
+commercial structures that are not owned by players (i.e.: they
+were sold via a contract.) (CommN.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 1 - These are commercial
+structures that are owned by player 1. (Comm1.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 2 - These are commercial
+structures that are owned by player 2. (Comm2.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 3 - These are commercial
+structures that are owned by player 3. (Comm3.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 4 - These are commercial
+structures that are owned by player 4. (Comm4.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 5 - These are commercial
+structures that are owned by player 5. (Comm5.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 6 - These are commercial
+structures that are owned by player 6. (Comm6.gif)</font> </p>
+
+<p><a name="Government Tiles:"></a><font color="#000000" size="4">Government
+Tiles:</font> </p>
+
+<p><font color="#000000" size="3">Non-player - These are
+government structures that are not owned by players (i.e.: they
+were sold via a contract.) (GovN.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 1 - These are government
+structures that are owned by player 1. (Gov1.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 2 - These are government
+structures that are owned by player 2. (Gov2.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 3 - These are government
+structures that are owned by player 3. (Gov3.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 4 - These are government
+structures that are owned by player 4. (Gov4.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 5 - These are government
+structures that are owned by player 5. (Gov5.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 6 - These are government
+structures that are owned by player 6. (Gov6.gif)</font> </p>
+
+<p><a name="Recreational Tiles:"></a><font size="4">Recreational
+Tiles:</font> </p>
+
+<p><font color="#000000" size="3">Non-player - These are
+recreational structures that are not owned by players (i.e.: they
+were sold via a contract.) (RecN.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 1 - These are
+recreational structures that are owned by player 1. (Rec1.gif)</font>
+</p>
+
+<p><font color="#000000" size="3">Player 2 - These are
+recreational structures that are owned by player 2. (Rec2.gif)</font>
+</p>
+
+<p><font color="#000000" size="3">Player 3 - These are
+recreational structures that are owned by player 3. (Rec3.gif)</font>
+</p>
+
+<p><font color="#000000" size="3">Player 4 - These are
+recreational structures that are owned by player 4. (Rec4.gif)</font>
+</p>
+
+<p><font color="#000000" size="3">Player 5 - These are
+recreational structures that are owned by player 5. (Rec5.gif)</font>
+</p>
+
+<p><font color="#000000" size="3">Player 6 - These are
+recreational structures that are owned by player 6. (Rec6.gif)</font>
+</p>
+
+<p><a name="Educational Tiles:"></a><font size="4">Educational
+Tiles:</font> </p>
+
+<p><font color="#000000" size="3">Non-player - These are
+educational structures that are not owned by players (i.e.: they
+were sold via a contract.) (EduN.gif)</font> </p>
+
+<p><font color="#000000" size="3">Player 1 - These are
+educational structures that are owned by player 1. (Edu1.gif)</font>
+<font color="#FF0000">Done</font></p>
+
+<p><font color="#000000" size="3">Player 2 - These are
+educational structures that are owned by player 2. (Edu2.gif)</font>
+<font color="#FF0000">Done</font></p>
+
+<p><font color="#000000" size="3">Player 3 - These are
+educational structures that are owned by player 3. (Edu3.gif)</font>
+</p>
+
+<p><font color="#000000" size="3">Player 4 - These are
+educational structures that are owned by player 4. (Edu4.gif)</font>
+</p>
+
+<p><font color="#000000" size="3">Player 5 - These are
+educational structures that are owned by player 5. (Edu5.gif)</font>
+</p>
+
+<p><font color="#000000" size="3">Player 6 - These are
+educational structures that are owned by player 6. (Edu6.gif)</font>
+</p>
+
+<p><font size="4">Miscellaneous Tiles:</font> </p>
+
+<p><font size="3">Demolished Tile - This tile will have the
+demolished remains of a structure. (Dem.gif)</font> </p>
+
+<p><font size="3">Current Player Action Tile - This tile will
+cover a structure to be traded, demolished or sold. (ActionC.gif)</font>
+</p>
+
+<p><font size="3">Other Player Action Tile - This tile will cover
+a structure to be traded for. (ActionO.gif)</font> </p>
+
+<p><font size="3">None Action Tile - This tile will cover an
+empty tile to be built on. (ActionN.gif)</font> </p>
+
+<p align="center">&nbsp;</p>
+
+<p align="center"><a name="Sound and Music"></a><font size="6">Sound
+and Music</font> </p>
+
+<p><font size="4">None is currently planned. We may decide to add
+sound effects later for actions.</font> </p>
+</body>
+</html>

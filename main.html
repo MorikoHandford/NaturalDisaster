@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="ECG Studios">
+<title>ECG Studios' Natural Disaster - Setup</title>
+
+<script language="JavaScript"><!--
+// Forest J. Handford
+
+// File Number of Players, file grid size and get Player Names
+function Setup()
+{
+	parent.PlayerNumber = eval(document.SetupForm.PlayersDrop.value);	// Store Player Number
+
+	// This code works fine for MSIE 5 but not Netscape 4
+	if(parent.PlayerNumber)
+	{
+		parent.Rows = eval(document.SetupForm.Rows.value);			// Store the Rows
+		parent.Columns = eval(document.SetupForm.Columns.value);	// Store the Columns
+		parent.Output = "";	// This will store HTML output
+
+		if(parent.Rows < 4|parent.Columns < 4)
+		{
+			alert("You need a map that is at least 4 X 4.");
+			return(0);
+		}
+
+		if(parent.Rows * parent.Columns > 625)
+		{
+			var Exit = confirm("You've choosen a map size that has " + parent.Rows * parent.Columns + " tiles.  On most computers Natural Disaster runs slowly with a map size this large, do you want to change the size?");
+
+			if(Exit) return(0);
+		}
+
+		// Create the Player Name HTML Output
+		parent.Output = "<html><head></head>";
+		parent.Output += "<body bgcolor=#FFFFFF text=#000000>";
+		parent.Output += "<font size='5' face='Times New Roman'><h1>Enter Player Names</h1></font>";
+		parent.Output += "<font size='3' face='Times New Roman'><form name=NameForm type=button>";
+
+		// Loop through the players to make the correct amount of name entries
+		for(var Count=0;Count<parent.PlayerNumber;Count++)
+		{
+			PlayerNum = eval(Count + 1);
+			parent.Output += "<p>Player " + PlayerNum;
+			parent.Output += " <input type='text' size='30' maxlength='30' name=Player" + PlayerNum + "Name value='Player " + PlayerNum + "'>";
+			parent.Output += "<select name=Player" + PlayerNum + "Type size=1 onchange='parent.Rename(" + PlayerNum + ")'>";
+			parent.Output += "<option selected value='C'>Computer (AI)</option><option value='H' selected>Human</option></select>";
+		}
+
+		parent.Output += "<p align=center><input type=button name=B1 ";
+		parent.Output += "value='Launch!' onclick='parent.Launch()'></p>";
+		parent.Output += "</form></font>";
+		parent.Output += "</body></html>";
+
+		// Write the output to the document
+		document.open();
+		document.write(parent.Output);
+		document.close();
+
+	}
+	else
+	{
+		parent.Forms = 0;
+		alert("Ooops, your browser doesn't support JavaScript forms!  You may want to use MSIE 5.0 or greater.");
+		parent.PlayerNumber = eval(prompt("How many players are there?",2));
+		parent.Rows = eval(prompt("How many rows would you like to have in your map?",8));
+
+		while(parent.Rows < 4) parent.Rows = eval(prompt("You need to have at least 4 rows.  How many would you like?",8));
+
+		parent.Columns = eval(prompt("How many columns would you like to have?",8));
+
+		while(parent.Columns < 4) parent.Columns = eval(prompt("You need to have at least 4 columns.  How many would you like?",8));
+
+		parent.Launch();
+	}
+}
+// --></script>
+
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+
+<center>
+<form name="SetupForm">
+<font size="5" face="Times New Roman">
+<h1>Setup</h1>
+</font>
+
+<font size="4" face="Times New Roman">
+<p>Number of Players&nbsp;
+<select name="PlayersDrop" size="1">
+	<option value=1>1</option>
+	<option value=2 selected>2</option>
+	<option value=3>3</option>
+	<option value=4>4</option>
+	<option value=5>5</option>
+	<option value=6>6</option>
+</select></p>
+
+<p><p>Map Size&nbsp;</p>
+Rows: <input type="text" size="3" name="Rows" value="9">
+Columns: <input type="text" size="3" name="Columns" value="14"></p>
+
+<p>
+<input type="button" value="Let the Construction Begin!" onclick="Setup()"><input type="button" value="Exit" onclick="parent.close()"><input type="button" value="Instructions" onclick="parent.Instruct()">
+</p>
+
+<p>&nbsp;</p>
+</font>
+<font size="3" face="Times New Roman">
+<p>By ECG Studios, copyright © 2001 <a href="http://www.eastcoastgames.com/">East Coast Games, Inc.</a></p>
+</font>
+</center>
+</form>
+</body>
+</html>

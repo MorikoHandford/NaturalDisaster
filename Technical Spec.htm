@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="Author" content="Forest J. Handford">
+<meta name="GENERATOR" content="Microsoft FrontPad 2.0">
+<title>Natural Disaster - Technical Specification</title>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+
+<p align="center"><font size="7">Natural Disaster - Technical
+Specification</font> </p>
+
+<p><font size="3">By Forest J. Handford</font> <br>
+<font size="3">Revision 1.0</font> <br>
+<font size="3">Copyright © East Coast Games, Inc. 2001</font> </p>
+
+<ul>
+    <li><a href="#Game Mechanics"><font size="3">Game Mechanics</font></a>
+        <ul>
+            <li><a href="#Platform and OS:">Platform and OS</a></li>
+            <li><a href="#Code Objects:">Code Objects</a></li>
+            <li><a href="#Control Loop:">Control Loop</a></li>
+            <li><a href="#Data Flow:">Data Flow</a></li>
+        </ul>
+    </li>
+    <li><a href="#User Interface"><font size="3">User Interface</font></a>
+        <ul>
+            <li>&nbsp;</li>
+        </ul>
+    </li>
+    <li><a href="#Art and Video"><font size="3">Art and Video</font></a>
+        <ul>
+            <li>&nbsp;</li>
+        </ul>
+    </li>
+    <li><a href="#Sound and Music"><font size="3">Sound and Music</font></a>
+    </li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p align="center"><a name="Game Mechanics"></a><font size="6"><b>Game
+Mechanics</b></font> </p>
+
+<p align="left"><a name="Platform and OS:"><font size="5">Platform
+and OS:</font></a></p>
+
+<p align="left"><font size="3">This will be a web-based game. The
+code will be in JavaScript and HTML. This is meant to run on any
+Operating system that can run Netscape Navigator or the Internet
+Explorer. The game will also be able to run on any OS with
+similiar web browsers that support JavaScript code. We will
+support IE 5.0 and greater and Netscape 4.0 and greater. Any
+machine that can run IE 5.0 or Netscape 4.0 must be able to run
+Natural Disaster.</font></p>
+
+<p align="left"><a name="Code Objects:"><font size="5">Code
+Objects:</font></a></p>
+
+<p align="left"><a
+href="http://www.EastCoastGames.com/ND/index.htm">http://www.EastCoastGames.com/ND/index.htm</a>
+- This will store all of the HTML and JavaScript code.</p>
+
+<p align="left"><a href="http://www.EastCoastGames.com/ND/">http://www.EastCoastGames.com/ND/</a>
+- This will store all of the image files and index.htm.</p>
+
+<p align="left"><a name="Control Loop:"><font size="5">Control
+Loop:</font></a></p>
+
+<p align="left"><font size="4">draw()</font><font size="3"> -
+This will be the most important function. It will draw the main
+game screen every time there is an update. This means it will
+draw the tiles and current player information.</font></p>
+
+<p align="left"><a name="Game Object Data:"><font size="5">Game
+Object Data:</font></a></p>
+
+<p align="left"><font size="4">Tile[Rows,Columns]</font><font
+size="3"> - This array will hold the data for all tiles
+including:<br>
+Owner - Who owns the tile, if anybody.<br>
+Structure - The strcuture on the tile, if any.<br>
+Image - The image to be used as the source.</font></p>
+
+<p align="left"><font size="4">Players[Player Number]</font><font
+size="3"> - This array will hold the player data including:<br>
+Name - The player's name.<br>
+Points - The number of points the player has.<br>
+Gold - The number of gold units the player has.<br>
+Wood - The number of wood units the player has.<br>
+Steel - The number of steel units the player has.<br>
+Concrete - The number of concrete units the player has.<br>
+Glass - The number of glass units the player has.<br>
+TechRes - A booleon flag for wether the player has built a
+residence.<br>
+TechInd - A booleon flag for wether the player has built an
+Industrial structure.<br>
+TechCom - A booleon flag for wehter the player has built a
+commercial structure.<br>
+TechGov - A booleon flag for wether the player has built a
+government structure.</font></p>
+
+<p align="left"><font size="4">Contracts[]</font><font size="3">
+- This array will hold the contracts available for bidding.</font></p>
+
+<p align="left"><font size="4">ContractsAvail[]</font><font
+size="3"> - This array will be used to take contracts out of to
+replenish the Contracts[] array.</font></p>
+
+<p align="left"><font size="4">Events[]</font><font size="3"> -
+This will hold all of the possible events.</font></p>
+
+<p align="left"><a name="Data Flow:"><font size="5">Data Flow:</font></a></p>
+
+<p align="left"><font size="3">All data will be stored in local
+memory. It will come from user input, operations, and hard-coded
+values.</font></p>
+
+<p align="left"><font size="3"></font>&nbsp;</p>
+
+<p align="center"><a name="User Interface"></a><font
+color="#000000" size="6"><b>User Interface</b></font> </p>
+
+<p align="left">&nbsp;</p>
+
+<p align="center"><a name="Art and Video"></a><font size="6"><b>Art
+and Video</b></font> </p>
+
+<p align="left">&nbsp;</p>
+
+<p align="center"><a name="Sound and Music"></a><font size="6">Sound
+and Music</font> </p>
+
+<p><font size="4">None is currently planned. We may decide to add
+sound effects later for actions.</font> </p>
+</body>
+</html>

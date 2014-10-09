@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPad 2.0">
+<title>Natural Disaster Bugs + Enhancements</title>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+
+<h1 align="center"><font color="#408080" size="4">Natural
+Disaster - Change Tracking Page</font></h1>
+
+<table border="1" cellpadding="3" cellspacing="3"
+bgcolor="#CCE6E6">
+    <tr>
+        <td bgcolor="#408080"><font color="#FFFFFF" size="3">Date
+        Added</font></td>
+        <td bgcolor="#408080"><font color="#FFFFFF" size="3">Description</font></td>
+        <td bgcolor="#408080"><a href="#Priority"><font
+        color="#FFFFFF" size="3">Priority</font></a></td>
+        <td bgcolor="#408080"><a href="#Status"><font
+        color="#FFFFFF" size="3">Status</font></a></td>
+        <td bgcolor="#408080"><a href="#Type"><font
+        color="#FFFFFF" size="3">Type</font></a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">05/29/01</td>
+        <td bgcolor="#FFFFFF">Occasionally when two rivers meet
+        one of the rivers ends before joining with the second
+        river.<p>Change: The way the code was written made this
+        need a very large amount of code to fix the problem. I
+        changed the map generation code to utilize UpdateTile
+        making it much simpler and forcing the tiles to be
+        correct.</p>
+        </td>
+        <td bgcolor="#FFFFFF">3</td>
+        <td bgcolor="#FFFFFF">Complete</td>
+        <td bgcolor="#FFFFFF">Bug</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">05/29/01</td>
+        <td bgcolor="#FFFFFF">When demolishing for tornados,
+        hurricanes, and mud slides buildings will be destroyed
+        but the message will state that none were destroyed.<p>Change:
+        Destroy() was returning a text string. It now returns a
+        number.</p>
+        </td>
+        <td bgcolor="#FFFFFF">2</td>
+        <td bgcolor="#FFFFFF">Complete</td>
+        <td bgcolor="#FFFFFF">Bug</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">05/29/01</td>
+        <td bgcolor="#FFFFFF">Add Computer (AI) players.</td>
+        <td bgcolor="#FFFFFF">4</td>
+        <td bgcolor="#FFFFFF">Draft</td>
+        <td bgcolor="#FFFFFF">Enhancement</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">05/29/01</td>
+        <td bgcolor="#FFFFFF">Clicking on contracts from the main
+        game screen causes a crash at line 2246:<p><font
+        face="Arial"><code>Output += &quot;&lt;td width=33%
+        valign=top&gt;&lt;h2 align=center&gt;&quot; +
+        Contract[Count].Name + &quot;&lt;/h2&gt;&lt;p&gt;&quot; +
+        Contract[Count].Description;</code></font></p>
+        <p>Change: The shuffling was causing a 0 to be used as a
+        contract subscript. This now uses the correct numbers.</p>
+        </td>
+        <td bgcolor="#FFFFFF">2</td>
+        <td bgcolor="#FFFFFF">Complete</td>
+        <td bgcolor="#FFFFFF">Bug</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">05/29/01</td>
+        <td bgcolor="#FFFFFF">The default font of the web browser
+        is currently used. This makes some words in Natural
+        Disaster hard too read. We should choose a specific font
+        and font size for every screen. Arial and 12 will
+        probably be the best.<p>Change: The font is now Times New
+        Roman with a sizes of 12 - 36 point.</p>
+        </td>
+        <td bgcolor="#FFFFFF">4</td>
+        <td bgcolor="#FFFFFF">Complete</td>
+        <td bgcolor="#FFFFFF">Enhancement</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">05/29/01</td>
+        <td bgcolor="#FFFFFF">The game is in the player's
+        original browser window cuasing the tool bar to be
+        accessable (including the back button!) We should launch
+        the game in a new window so that all players have the
+        same window size and no toolbar.</td>
+        <td bgcolor="#FFFFFF">4</td>
+        <td bgcolor="#FFFFFF">Complete</td>
+        <td bgcolor="#FFFFFF">Enhancement</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">05/29/01</td>
+        <td bgcolor="#FFFFFF">The game should have instructions
+        accesable from the first setup page and from the main
+        game screen.<p>Change: I made the code for this but for
+        now I'm just using a copy of the functional
+        specifications as instructions. The instructions will be
+        made be our writer.</p>
+        </td>
+        <td bgcolor="#FFFFFF">4</td>
+        <td bgcolor="#FFFFFF">Complete</td>
+        <td bgcolor="#FFFFFF">Enhancement</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">06/05/01</td>
+        <td bgcolor="#FFFFFF">The Demolish button doesn't work
+        after hurricanes and disaster because IE has a problem
+        when a var Demolish has the same name as Demolish() .</td>
+        <td bgcolor="#FFFFFF">1</td>
+        <td bgcolor="#FFFFFF">Complete</td>
+        <td bgcolor="#FFFFFF">Bug</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">06/05/01</td>
+        <td bgcolor="#FFFFFF">Add Support for Netscape.<p>Change:
+        MSIE 5 and Netscape 6 are now supported. Netscape 4.6 for
+        Windows cannot handle JavaScript forms within frames so
+        it will not be supported but users will get an error
+        message.</p>
+        </td>
+        <td bgcolor="#FFFFFF">2</td>
+        <td bgcolor="#FFFFFF">Complete</td>
+        <td bgcolor="#FFFFFF">Bug</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">06/13/01</td>
+        <td bgcolor="#FFFFFF">Occasionally a map without a road
+        will be created. It seems to happen mostly on small maps.</td>
+        <td bgcolor="#FFFFFF">2</td>
+        <td bgcolor="#FFFFFF">Submitted</td>
+        <td bgcolor="#FFFFFF">Bug</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">06/13/01</td>
+        <td bgcolor="#FFFFFF">When the mouse is over a water tile
+        adjacent to a road the tile changes to the build tile. We
+        should assume bridges for water.</td>
+        <td bgcolor="#FFFFFF">3</td>
+        <td bgcolor="#FFFFFF">Submitted</td>
+        <td bgcolor="#FFFFFF">Bug</td>
+    </tr>
+</table>
+
+<p><a name="Priority">Priority</a> - The priorities are 1 through
+5. 1 is the highest priority and should only be for bugs that
+occur in every game. 2 Should be restricted to bugs that either
+do major damage ( Crashes, Change Score or Resources, etc.). 4
+and 5 are only for enhancements.</p>
+
+<p><a name="Status">Status</a> - Complete - meaning
+fixed/added/changed, Draft - meaning working on, QC - Quality
+Control/Testing, or Submitted.</p>
+
+<p><a name="Type">Type</a> - Either Bug or Enhancement.</p>
+
+<p>&nbsp;</p>
+</body>
+</html>
+r="#FFFFFF">Bug</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">06/14/01</td>
+        <td bgcolor="#FFFFFF">Give users the oppurtunity to save
+        setup settings to a cookie.</td>
+        <td bgcolor="#FFFFFF">5</td>
+        <td bgcolor="#FFFFFF">Submitted</td>
+        <td bgcolor="#FFFFFF">Enhancement</td>
+    </tr>
+</table>
+
+<p><a name="Priority">Priority</a> - The priorities are 1 through
+5. 1 is the highest priority and should only be for bugs that
+occur in every game. 2 Should be restricted to bugs that either
+do major damage ( Crashes, Change Score or Resources, etc.). 4
+and 5 are only for enhancements.</p>
+
+<p><a name="Status">Status</a> - Complete - meaning
+fixed/added/changed, Draft - meaning working on, QC - Quality
+Control/Testing, or Submitted.</p>
+
+<p><a name="Type">Type</a> - Either Bug or Enhancement.</p>
+
+<p>&nbsp;</p>
+</body>
+</html>
+
+        <td bgcolor="#FFFFFF">Submitted</td>
+        <td bgcolor="#FFFFFF">Enhancement</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">07/08/01</td>
+        <td bgcolor="#FFFFFF">In a contract for 4 or more
+        buildings if the buildings are not together but in sets
+        of two or more the bid goes through.</td>
+        <td bgcolor="#FFFFFF">3</td>
+        <td bgcolor="#FFFFFF">Submitted</td>
+        <td bgcolor="#FFFFFF">Bug</td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF">07/08/01</td>
+        <td bgcolor="#FFFFFF">When a flood occurs not all
+        adjacent buildings are destroyed!</td>
+        <td bgcolor="#FFFFFF">3</td>
+        <td bgcolor="#FFFFFF">Submitted</td>
+        <td bgcolor="#FFFFFF">Bug</td>
+    </tr>
+</table>
+
+<p><a name="Priority">Priority</a> - The priorities are 1 through
+5. 1 is the highest priority and should only be for bugs that
+occur in every game. 2 Should be restricted to bugs that either
+do major damage ( Crashes, Change Score or Resources, etc.). 4
+and 5 are only for enhancements.</p>
+
+<p><a name="Status">Status</a> - Complete - meaning
+fixed/added/changed, Draft - meaning working on, QC - Quality
+Control/Testing, or Submitted.</p>
+
+<p><a name="Type">Type</a> - Either Bug or Enhancement.</p>
+
+<p>&nbsp;</p>
+</body>
+</html>
